@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+from csv import DictReader
+from decimal import Decimal
+from sys import argv
+
+
+def drop_decimals(d):
+    # Decimal.normalize gives 2E+1 for 20...
+    d = str(d)
+    if '.' in d:
+        d = d.rstrip('0').rstrip('.')
+    return d
+
+
+c = open(argv[1], 'r')
+# Discard the ARRL DATA_SPEC_VERSION line
+c.readline()
+d = DictReader(c)
+
+print '<?xml version="1.0"?>'
+print '<radio>'
+print '<memories>'
+
+i = 0
+for row in d:
+    name = row['CALL']
+    if name.endswith('/R'):
+        name = name[:-2]
+    longname = ' '.join((name, row['CITY']))[:16]
+    in_freq = Decimal(row['INPUT_FREQ'])
+    out_freq = Decimal(row['OUTPUT_FREQ'])
+    duplex = 'off'
+    offset = Decimal(0)
+    if out_freq < in_freq:
+        duplex = 'negative'
+        offset = in_freq - out_freq
+    elif out_freq > in_freq:
+        duplex = 'positive'
+        offset = out_freq - in_freq
+    mode = None
+    if row['FM_WIDE'] == 'Y':
+        mode = 'FM'
+    elif row['FM_NARROW'] == 'Y':
+        mode = 'NFM'
+    else:
+        continue
+    if 'Y' in (
+            row['DSTAR_DV'],
+            row['DSTAR_DD'],
+            row['DMR'],
+            # row['FUSION'],
+            row['P25_PHASE_1'],
+            row['P25_PHASE_2'],
+            row['NXDN_DIGITAL'],
+            row['ATV'],
+            row['DATV'],
+            ):
+        # These are not Analog modes
+        continue
+    print '<memory location="%s">' % i
+    print '<shortName>%s</shortName>' % name
+    print '<longName>%s</longName>' % longname
+    print '<frequency units="MHz">%s</frequency>' % drop_decimals(out_freq)
+    print '<squelch id="rtone" type="repeater">'
+    print '<tone>%s</tone>' % (row['CTCSS_IN'] or '88.5')
+    print '</squelch>'
+    print '<squelch id="ctone" type="ctcss">'
+    print '<tone>%s</tone>' % (row['CTCSS_OUT'] or '88.5')
+    print '</squelch>'
+    print '<squelch id="dtcs" type="dtcs">'
+    print '<code>%s</code>' % (row['DCS_CDCSS'] or '023')
+    print '<polarity>%s</polarity>' % 'NN'
+    print '</squelch>'
+    if row['CTCSS_IN']:
+        print '<squelchSetting>%s</squelchSetting>' % 'rtone'
+    elif row['DCS_CDCSS']:
+        print '<squelchSetting>%s</squelchSetting>' % 'dtcs'
+    print '<duplex>%s</duplex>' % duplex
+    print '<offset units="MHz">%s</offset>' % drop_decimals(offset)
+    print '<mode>%s</mode>' % mode
+    print '<tuningStep units="kHz">%s</tuningStep>' % '5.0'
+    print '</memory>'
+    i += 1
+
+c.close()
+
+print '</memories>'
+print '<banks/>'
+print '</radio>'
