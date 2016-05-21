@@ -47,10 +47,10 @@ for n in z.namelist():
                 duplex = 'off'
                 offset = Decimal(0)
                 if out_freq < in_freq:
-                    duplex = 'negative'
+                    duplex = 'positive'
                     offset = in_freq - out_freq
                 elif out_freq > in_freq:
-                    duplex = 'positive'
+                    duplex = 'negative'
                     offset = out_freq - in_freq
                 mode = None
                 if row['FM_WIDE'] == 'Y':

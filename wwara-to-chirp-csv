@@ -41,10 +41,10 @@ for n in z.namelist():
                 duplex = 'off'
                 offset = Decimal(0)
                 if out_freq < in_freq:
-                    duplex = '-'
+                    duplex = '+'
                     offset = in_freq - out_freq
                 elif out_freq > in_freq:
-                    duplex = '+'
+                    duplex = '-'
                     offset = out_freq - in_freq
                 tone = None
                 if row['CTCSS_IN']:
