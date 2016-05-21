@@ -1,0 +1,160 @@
+#!/usr/bin/env python2
+from StringIO import StringIO
+from csv import DictReader, DictWriter, QUOTE_ALL
+from decimal import Decimal
+from sys import stdout
+from zipfile import ZipFile
+
+import requests
+
+FIELDNAMES = (
+    'Group No', 'Group Name', 'Name', 'Sub Name', 'Repeater Call Sign',
+    'Gateway Call Sign', 'Frequency', 'Dup', 'Offset', 'Mode', 'TONE',
+    'Repeater Tone', 'RPT1USE',
+    'Position', 'Latitude', 'Longitude', 'UTC Offset')
+
+r = requests.get('https://www.wwara.org/DataBaseExtract.zip')
+# ZipFile requires a file-like object that supports seek
+f = StringIO(r.content)
+r.close()
+z = ZipFile(f)
+
+
+def _drop_decimals(d):
+    # Decimal.normalize gives 2E+1 for 20...
+    d = str(d)
+    if '.' in d:
+        d = d.rstrip('0').rstrip('.')
+    return d
+
+
+def _supported(row):
+    if 'Y' in (
+            row['DMR'],
+            # row['FUSION'],  # Fusion also operates Analog
+            row['P25_PHASE_1'],
+            row['P25_PHASE_2'],
+            row['NXDN_DIGITAL'],
+            row['ATV'],
+            row['DATV'],
+            ):
+        # These are not Analog modes
+        return False
+    ifreq = Decimal(row['INPUT_FREQ'])
+    if ifreq > 144 and ifreq < 148:
+        # 2M
+        return True
+    if ifreq > 420 and ifreq < 450:
+        # 70CM
+        return True
+    return False
+
+
+def _offset(row):
+    ifreq = Decimal(row['INPUT_FREQ'])
+    ofreq = Decimal(row['OUTPUT_FREQ'])
+    duplex = 'OFF'
+    offset = Decimal(0)
+    if ofreq < ifreq:
+        duplex = 'DUP+'
+        offset = ifreq - ofreq
+    elif ofreq > ifreq:
+        duplex = 'DUP-'
+        offset = ofreq - ifreq
+    return duplex, _drop_decimals(offset)
+
+
+def _mode(row):
+    mode = 'FM'
+    if row['FM_WIDE'] == 'Y':
+        mode = 'FM'
+    elif row['FM_NARROW'] == 'Y':
+        mode = 'FM-N'
+    elif row['DSTAR_DV'] == 'Y':
+        mode = 'DV'
+    return mode
+
+
+def _access(row):
+    access = 'OFF'
+    tone = '88.5Hz'
+    tsql = '88.5Hz'
+    if row['CTCSS_IN']:
+        access = 'TONE'
+        tone = row['CTCSS_IN'] + 'Hz'
+        if row['CTCSS_OUT']:
+            access = 'TSQL'
+            tsql = row['CTCSS_OUT'] + 'Hz'
+    # No DTCS possible!?
+    return access, tone, tsql
+
+
+def _name(row):
+    return ' '.join((row['CALL'], row['CITY']))[:16]
+
+
+def _call(row):
+    call = row['CALL']
+    if row['DSTAR_DV'] == 'N' and row['DSTAR_DD'] == 'N':
+        return call, None
+    ifreq = Decimal(row['INPUT_FREQ'])
+    if ifreq > 144 and ifreq < 148:
+        # 2M
+        return call + ' C', call + ' G'
+    if ifreq > 420 and ifreq < 450:
+        # 70CM
+        return call + ' B', call + ' G'
+
+
+def _position(row):
+    latitude = row['LATITUDE'] or '0'
+    longitude = row['LONGITUDE'] or '-0'
+    position = 'None'
+    if latitude and longitude:
+        position = 'Approximate'
+    return position, latitude, longitude
+
+
+for n in z.namelist():
+    if n.endswith('.csv') and 'pending' not in n:
+        w = DictWriter(stdout, FIELDNAMES)
+        w.writeheader()
+        with z.open(n) as c:
+            # Remove the DATA_SPEC_VERSION header line from the .csv
+            c.readline()
+            d = DictReader(c)
+            i = 0
+            wlist = []
+            for row in d:
+                if not _supported(row):
+                    continue
+                duplex, offset = _offset(row)
+                mode = _mode(row)
+                name = _name(row)
+                call, gateway = _call(row)
+                access, tone, tsql = _access(row)
+                position, latitude, longitude = _position(row)
+                wlist.append({
+                    'Group No': 7,
+                    'Group Name': 'WWARA',
+                    'Name': name,
+                    'Sub Name': row['LOCALE'][:8],
+                    'Repeater Call Sign': call,
+                    'Gateway Call Sign': gateway,
+                    'Frequency': _drop_decimals(row['OUTPUT_FREQ']),
+                    'Dup': duplex,
+                    'Offset': offset,
+                    'Mode': mode,
+                    'TONE': access,
+                    'Repeater Tone': tone,  # No field for DTCS!?
+                    'RPT1USE': 'YES',  # Actually something like "Don't Skip"
+                    'Position': position,
+                    'Latitude': latitude,
+                    'Longitude': longitude,
+                    'UTC Offset': '-8:00',  # PST, but how is this useful!?
+                    })
+                i += 1
+            w.writerows(sorted(wlist,
+                key=lambda x: (x['Mode'], Decimal(x['Frequency']))))
+
+f.close()
