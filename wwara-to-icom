@@ -100,10 +100,10 @@ def _call(row):
     ifreq = Decimal(row['INPUT_FREQ'])
     if ifreq > 144 and ifreq < 148:
         # 2M
-        return call + ' C', call + ' G'
+        return '{:<7}C'.format(call), '{:<7}G'.format(call)
     if ifreq > 420 and ifreq < 450:
         # 70CM
-        return call + ' B', call + ' G'
+        return '{:<7}B'.format(call), '{:<7}G'.format(call)
 
 
 def _position(row):
