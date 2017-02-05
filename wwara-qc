@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+from csv import DictReader
+from decimal import Decimal
+from sys import argv
+
+# "FC_RECORD_ID","SOURCE","OUTPUT_FREQ","INPUT_FREQ","STATE","CITY","LOCALE",
+# "CALL","SPONSOR","CTCSS_IN","CTCSS_OUT","DCS_CDCSS","DTMF","LINK",
+# "FM_WIDE","FM_NARROW","DSTAR_DV","DSTAR_DD","DMR","DMR_COLOR_CODE",
+# "FUSION","FUSION_DSQ","P25_PHASE_1","P25_PHASE_2","P25_NAC",
+# "NXDN_DIGITAL","NXDN_MIXED","NXDN_RAN","ATV","DATV","RACES","ARES","WX",
+# "URL","LATITUDE","LONGITUDE","EXPIRATION_DATE","COMMENT"
+
+
+def error(row):
+    o = Decimal(row['OUTPUT_FREQ'])
+    i = Decimal(row['INPUT_FREQ'])
+    offset = i - o
+    print('ERROR:', row['CALL'], o, i, offset)
+
+
+c = open(argv[1], 'r')
+# Discard the ARRL DATA_SPEC_VERSION line
+c.readline()
+d = DictReader(c)
+
+
+for row in d:
+    o = Decimal(row['OUTPUT_FREQ'])
+    i = Decimal(row['INPUT_FREQ'])
+    offset = i - o
+    if o >= Decimal('52.81') and o <= Decimal('53.99'):
+        if offset != Decimal('-1.7'):
+            error(row)
+    elif o >= Decimal('145.1') and o <= Decimal('145.49'):
+        if offset != Decimal('-0.6'):
+            error(row)
+    elif o >= Decimal('146.62') and o <= Decimal('147.38'):
+        if i >= Decimal('147.61') and i <= Decimal('147.99'):
+            if offset != Decimal('0.6'):
+                error(row)
+        elif i >= Decimal('146.01') and i <= Decimal('146.4'):
+            if offset != Decimal('-0.6'):
+                error(row)
+        else:
+            error(row)
+    elif o >= Decimal('146.40625') and o <= Decimal('146.50625'):
+        if offset != Decimal('1'):
+            error(row)
+    elif o == Decimal('146.005'):
+        if offset != Decimal('0.6'):
+            error(row)
+    elif o == Decimal('147.995'):
+        if offset != Decimal('-0.6'):
+            error(row)
+    elif (o >= Decimal('223.78') and o <= Decimal('223.98')) \
+            or (o >= Decimal('224.02') and o <= Decimal('224.62')) \
+            or (o >= Decimal('224.635') and o <= Decimal('224.665')) \
+            or (o >= Decimal('224.68') and o <= Decimal('224.82')) \
+            or (o >= Decimal('224.86') and o <= Decimal('224.98')):
+        if offset != Decimal('-1.6'):
+            error(row)
+    elif o >= Decimal('440') and o <= Decimal('445'):
+        if offset != Decimal('5'):
+            error(row)
+    elif o >= Decimal('927.3') and o <= Decimal('928'):
+        if offset != Decimal('-25'):
+            error(row)
+    elif o >= Decimal('1247') and o <= Decimal('1252'):
+        # D-STAR DD
+        if offset != Decimal('0'):
+            error(row)
+    elif o >= Decimal('1290') and o <= Decimal('1295'):
+        if offset != Decimal('-20'):
+            error(row)
+    else:
+        error(row)
+        continue
+    print(o, i, i - o)
+
+c.close()
