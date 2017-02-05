@@ -66,12 +66,12 @@ def _offset(row):
 
 def _mode(row):
     mode = 'FM'
-    if row['FM_WIDE'] == 'Y':
+    if row['DSTAR_DV'] == 'Y':
+        mode = 'DV'
+    elif row['FM_WIDE'] == 'Y':
         mode = 'FM'
     elif row['FM_NARROW'] == 'Y':
         mode = 'FM-N'
-    elif row['DSTAR_DV'] == 'Y':
-        mode = 'DV'
     return mode
 
 
