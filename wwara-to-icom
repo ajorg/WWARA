@@ -81,10 +81,10 @@ def _access(row):
     tsql = '88.5Hz'
     if row['CTCSS_IN']:
         access = 'TONE'
-        tone = row['CTCSS_IN'] + 'Hz'
+        tone = '{:.1f}Hz'.format(Decimal(row['CTCSS_IN']))
         if row['CTCSS_OUT']:
             access = 'TSQL'
-            tsql = row['CTCSS_OUT'] + 'Hz'
+            tsql = '{:.1f}Hz'.format(Decimal(row['CTCSS_OUT']))
     # No DTCS possible!?
     return access, tone, tsql
 
