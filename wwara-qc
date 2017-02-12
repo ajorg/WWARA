@@ -10,12 +10,13 @@ from sys import argv
 # "NXDN_DIGITAL","NXDN_MIXED","NXDN_RAN","ATV","DATV","RACES","ARES","WX",
 # "URL","LATITUDE","LONGITUDE","EXPIRATION_DATE","COMMENT"
 
+FORMAT = '%-6s%10.4f%10.4f % .2f'
 
 def error(row):
     o = Decimal(row['OUTPUT_FREQ'])
     i = Decimal(row['INPUT_FREQ'])
     offset = i - o
-    print('ERROR:', row['CALL'], o, i, offset)
+    print((FORMAT + ' ERROR!') % (row['CALL'], o, i, offset))
 
 d = []
 for arg in argv[1:]:
@@ -141,6 +142,6 @@ for row in d:
     else:
         error(row)
         continue
-    print(o, i, i - o)
+    print(FORMAT % (row['CALL'], o, i, offset))
 
 c.close()
