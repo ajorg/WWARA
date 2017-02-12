@@ -17,11 +17,12 @@ def error(row):
     offset = i - o
     print('ERROR:', row['CALL'], o, i, offset)
 
-
-c = open(argv[1], 'r')
-# Discard the ARRL DATA_SPEC_VERSION line
-c.readline()
-d = DictReader(c)
+d = []
+for arg in argv[1:]:
+    c = open(arg, 'r')
+    # Discard the ARRL DATA_SPEC_VERSION line
+    c.readline()
+    d.extend(DictReader(c))
 
 # https://www.wwara.org/WWARA_BAND_PLAN_2016_07_06.pdf
 for row in d:
