@@ -114,11 +114,6 @@ for row in d:
             error(row)
 
     # 33cm Band
-    # 927.0000 - 927.3000 Digital (?)
-    elif o >= Decimal('927') and o <= Decimal('927.3'):
-        # 902.0000 - 902.3000 Weak Signal Activities - NO FM ALLOWED (?)
-        if offset != Decimal('-25'):
-            error(row)
     # 927.3000 - 928.0000 Repeater Outputs
     elif o >= Decimal('927.3') and o <= Decimal('928'):
         # 902.3000 - 903.0000 Repeater Inputs
