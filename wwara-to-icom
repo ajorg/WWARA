@@ -102,12 +102,12 @@ def _call(row):
 
 
 def _position(row):
-    latitude = row['LATITUDE'] or '0'
-    longitude = row['LONGITUDE'] or '-0'
+    latitude = row['LATITUDE']
+    longitude = row['LONGITUDE']
     position = 'None'
     if latitude and longitude:
         position = 'Approximate'
-    return position, latitude, longitude
+    return position, latitude or '0', longitude or '-0'
 
 
 def convert(z):
