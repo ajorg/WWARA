@@ -4,7 +4,7 @@ import codecs
 import logging
 from csv import DictReader, DictWriter
 from decimal import Decimal
-from io import BytesIO
+from io import BytesIO, StringIO
 from sys import stdout
 from zipfile import ZipFile
 
@@ -185,17 +185,17 @@ def lambda_handler(event=None, context=None):
     data = src.get('Body').read()
     zipfile = ZipFile(BytesIO(data))
 
-    bytes_obj = BytesIO()
-    writer = DictWriter(bytes_obj, FIELDNAMES)
+    string_obj = StringIO()
+    writer = DictWriter(string_obj, FIELDNAMES)
     writer.writeheader()
     logging.info('Converting...')
     writer.writerows(convert(zipfile))
 
     logging.info('Writing to %s', destination)
     client.put_object(Bucket=dst_bucket, Key=dst_key,
-                      Body=bytes_obj.getvalue(), ContentType='text/csv',
+                      Body=string_obj.getvalue(), ContentType='text/csv',
                       StorageClass='REDUCED_REDUNDANCY', ACL='public-read')
-    bytes_obj.close()
+    string_obj.close()
 
 
 if __name__ == '__main__':
