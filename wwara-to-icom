@@ -8,6 +8,8 @@ from io import BytesIO, StringIO
 from sys import stdout
 from zipfile import ZipFile
 
+LOG = logging.getLogger(__name__)
+
 FIELDNAMES = (
     'Group No', 'Group Name', 'Name', 'Sub Name', 'Repeater Call Sign',
     'Gateway Call Sign', 'Frequency', 'Dup', 'Offset', 'Mode', 'TONE',
@@ -168,6 +170,8 @@ def lambda_handler(event=None, context=None):
     except ImportError:
         from urlparse import urlparse
 
+    LOG.setLevel(logging.DEBUG)
+
     client = boto3.client('s3')
 
     source = environ.get('SOURCE')
@@ -180,7 +184,7 @@ def lambda_handler(event=None, context=None):
     dst_bucket = dst_parsed.netloc
     dst_key = dst_parsed.path.lstrip('/')
 
-    logging.info('Reading from %s', source)
+    LOG.info('Reading from %s', source)
     src = client.get_object(Bucket=src_bucket, Key=src_key)
     data = src.get('Body').read()
     zipfile = ZipFile(BytesIO(data))
@@ -188,10 +192,10 @@ def lambda_handler(event=None, context=None):
     string_obj = StringIO()
     writer = DictWriter(string_obj, FIELDNAMES)
     writer.writeheader()
-    logging.info('Converting...')
+    LOG.info('Converting...')
     writer.writerows(convert(zipfile))
 
-    logging.info('Writing to %s', destination)
+    LOG.info('Writing to %s', destination)
     client.put_object(Bucket=dst_bucket, Key=dst_key,
                       Body=string_obj.getvalue(), ContentType='text/csv',
                       StorageClass='REDUCED_REDUNDANCY', ACL='public-read')
