@@ -12,11 +12,13 @@ from sys import argv
 
 FORMAT = '%-6s%10.4f%10.4f % .2f'
 
+
 def error(row):
     o = Decimal(row['OUTPUT_FREQ'])
     i = Decimal(row['INPUT_FREQ'])
     offset = i - o
     print((FORMAT + ' ERROR!') % (row['CALL'], o, i, offset))
+
 
 d = []
 for arg in argv[1:]:
@@ -24,6 +26,7 @@ for arg in argv[1:]:
     # Discard the ARRL DATA_SPEC_VERSION line
     c.readline()
     d.extend(DictReader(c))
+    c.close()
 
 # https://www.wwara.org/WWARA_BAND_PLAN_2016_07_06.pdf
 for row in d:
@@ -143,5 +146,3 @@ for row in d:
         error(row)
         continue
     print(FORMAT % (row['CALL'], o, i, offset))
-
-c.close()
