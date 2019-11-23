@@ -7,12 +7,23 @@ import xml.etree.ElementTree as ET
 
 import requests
 
-fieldnames = ('Location', 'Name', 'Frequency', 'Duplex', 'Offset', 'Tone',
-              'rToneFreq', 'cToneFreq', 'DtcsCode', 'DtcsPolarity', 'Mode',
-              'Comment')
+fieldnames = (
+    "Location",
+    "Name",
+    "Frequency",
+    "Duplex",
+    "Offset",
+    "Tone",
+    "rToneFreq",
+    "cToneFreq",
+    "DtcsCode",
+    "DtcsPolarity",
+    "Mode",
+    "Comment",
+)
 #              'TStep', 'Skip', 'Comment', 'URCALL', 'RPT1CALL', 'RPT2CALL')
 
-r = requests.get('https://www.wwara.org/DataBaseExtract.zip')
+r = requests.get("https://www.wwara.org/DataBaseExtract.zip")
 # ZipFile requires a file-like object that supports seek
 f = StringIO(r.content)
 r.close()
@@ -22,82 +33,81 @@ z = ZipFile(f)
 def drop_decimals(d):
     # Decimal.normalize gives 2E+1 for 20...
     d = str(d)
-    if '.' in d:
-        d = d.rstrip('0').rstrip('.')
+    if "." in d:
+        d = d.rstrip("0").rstrip(".")
     return d
 
 
 for n in z.namelist():
-    if n.endswith('.csv') and 'pending' not in n:
-        radio = ET.Element('radio')
+    if n.endswith(".csv") and "pending" not in n:
+        radio = ET.Element("radio")
         tree = ET.ElementTree(radio)
-        memories = ET.SubElement(radio, 'memories')
+        memories = ET.SubElement(radio, "memories")
         with z.open(n) as c:
             # Remove the DATA_SPEC_VERSION header line from the .csv
             c.readline()
             d = DictReader(c)
             i = 0
             for row in d:
-                name = row['CALL']
-                if name.endswith('/R'):
+                name = row["CALL"]
+                if name.endswith("/R"):
                     name = name[:-2]
-                longname = ' '.join((name, row['CITY']))[:16]
-                in_freq = Decimal(row['INPUT_FREQ'])
-                out_freq = Decimal(row['OUTPUT_FREQ'])
-                duplex = 'off'
+                longname = " ".join((name, row["CITY"]))[:16]
+                in_freq = Decimal(row["INPUT_FREQ"])
+                out_freq = Decimal(row["OUTPUT_FREQ"])
+                duplex = "off"
                 offset = Decimal(0)
                 if out_freq < in_freq:
-                    duplex = 'positive'
+                    duplex = "positive"
                     offset = in_freq - out_freq
                 elif out_freq > in_freq:
-                    duplex = 'negative'
+                    duplex = "negative"
                     offset = out_freq - in_freq
                 mode = None
-                if row['FM_WIDE'] == 'Y':
-                    mode = 'FM'
-                elif row['FM_NARROW'] == 'Y':
-                    mode = 'NFM'
+                if row["FM_WIDE"] == "Y":
+                    mode = "FM"
+                elif row["FM_NARROW"] == "Y":
+                    mode = "NFM"
                 else:
                     continue
-                if 'Y' in (
-                        row['DSTAR_DV'],
-                        row['DSTAR_DD'],
-                        row['DMR'],
-                        # row['FUSION'],
-                        row['P25_PHASE_1'],
-                        row['P25_PHASE_2'],
-                        row['NXDN_DIGITAL'],
-                        row['ATV'],
-                        row['DATV'],
-                        ):
+                if "Y" in (
+                    row["DSTAR_DV"],
+                    row["DSTAR_DD"],
+                    row["DMR"],
+                    # row['FUSION'],
+                    row["P25_PHASE_1"],
+                    row["P25_PHASE_2"],
+                    row["NXDN_DIGITAL"],
+                    row["ATV"],
+                    row["DATV"],
+                ):
                     # These are not Analog modes
                     continue
-                memory = ET.SubElement(memories, 'memory', location=str(i))
-                ET.SubElement(memory, 'shortName').text = name
-                ET.SubElement(memory, 'longName').text = longname
-                ET.SubElement(memory, 'frequency', units='MHz').text = \
-                    drop_decimals(out_freq)
-                rtone = ET.SubElement(memory, 'squelch',
-                                      id='rtone', type='repeater')
-                ET.SubElement(rtone, 'tone').text = row['CTCSS_IN'] or '88.5'
-                ctone = ET.SubElement(memory, 'squelch',
-                                      id='ctone', type='ctcss')
-                ET.SubElement(ctone, 'tone').text = row['CTCSS_OUT'] or '88.5'
-                dtcs = ET.SubElement(memory, 'squelch',
-                                        id='dtcs', type='dtcs')
-                ET.SubElement(dtcs, 'code').text = row['DCS_CDCSS'] or '023'
-                ET.SubElement(dtcs, 'polarity').text = 'NN'
-                if row['CTCSS_IN']:
-                    ET.SubElement(memory, 'squelchSetting').text = 'rtone'
-                elif row['DCS_CDCSS']:
-                    ET.SubElement(memory, 'squelchSetting').text = 'dtcs'
-                ET.SubElement(memory, 'duplex').text = duplex
-                ET.SubElement(memory, 'offset', units='MHz').text = \
-                    drop_decimals(offset)
-                ET.SubElement(memory, 'mode').text = mode
-                ET.SubElement(memory, 'tuningStep', units='kHz').text = '5.0'
+                memory = ET.SubElement(memories, "memory", location=str(i))
+                ET.SubElement(memory, "shortName").text = name
+                ET.SubElement(memory, "longName").text = longname
+                ET.SubElement(memory, "frequency", units="MHz").text = drop_decimals(
+                    out_freq
+                )
+                rtone = ET.SubElement(memory, "squelch", id="rtone", type="repeater")
+                ET.SubElement(rtone, "tone").text = row["CTCSS_IN"] or "88.5"
+                ctone = ET.SubElement(memory, "squelch", id="ctone", type="ctcss")
+                ET.SubElement(ctone, "tone").text = row["CTCSS_OUT"] or "88.5"
+                dtcs = ET.SubElement(memory, "squelch", id="dtcs", type="dtcs")
+                ET.SubElement(dtcs, "code").text = row["DCS_CDCSS"] or "023"
+                ET.SubElement(dtcs, "polarity").text = "NN"
+                if row["CTCSS_IN"]:
+                    ET.SubElement(memory, "squelchSetting").text = "rtone"
+                elif row["DCS_CDCSS"]:
+                    ET.SubElement(memory, "squelchSetting").text = "dtcs"
+                ET.SubElement(memory, "duplex").text = duplex
+                ET.SubElement(memory, "offset", units="MHz").text = drop_decimals(
+                    offset
+                )
+                ET.SubElement(memory, "mode").text = mode
+                ET.SubElement(memory, "tuningStep", units="kHz").text = "5.0"
                 i += 1
-        ET.SubElement(radio, 'banks')
-        tree.write('wwara.chirp', xml_declaration=True)
+        ET.SubElement(radio, "banks")
+        tree.write("wwara.chirp", xml_declaration=True)
 
 f.close()

@@ -7,12 +7,23 @@ from zipfile import ZipFile
 
 import requests
 
-fieldnames = ('Location', 'Name', 'Frequency', 'Duplex', 'Offset', 'Tone',
-              'rToneFreq', 'cToneFreq', 'DtcsCode', 'DtcsPolarity', 'Mode',
-              'Comment')
+fieldnames = (
+    "Location",
+    "Name",
+    "Frequency",
+    "Duplex",
+    "Offset",
+    "Tone",
+    "rToneFreq",
+    "cToneFreq",
+    "DtcsCode",
+    "DtcsPolarity",
+    "Mode",
+    "Comment",
+)
 #              'TStep', 'Skip', 'Comment', 'URCALL', 'RPT1CALL', 'RPT2CALL')
 
-r = requests.get('https://www.wwara.org/DataBaseExtract.zip')
+r = requests.get("https://www.wwara.org/DataBaseExtract.zip")
 # ZipFile requires a file-like object that supports seek
 f = StringIO(r.content)
 r.close()
@@ -22,12 +33,13 @@ z = ZipFile(f)
 def drop_decimals(d):
     # Decimal.normalize gives 2E+1 for 20...
     d = str(d)
-    if '.' in d:
-        d = d.rstrip('0').rstrip('.')
+    if "." in d:
+        d = d.rstrip("0").rstrip(".")
     return d
 
+
 for n in z.namelist():
-    if n.endswith('.csv') and 'pending' not in n:
+    if n.endswith(".csv") and "pending" not in n:
         w = DictWriter(stdout, fieldnames)
         w.writeheader()
         with z.open(n) as c:
@@ -36,57 +48,59 @@ for n in z.namelist():
             d = DictReader(c)
             i = 0
             for row in d:
-                in_freq = Decimal(row['INPUT_FREQ'])
-                out_freq = Decimal(row['OUTPUT_FREQ'])
-                duplex = 'off'
+                in_freq = Decimal(row["INPUT_FREQ"])
+                out_freq = Decimal(row["OUTPUT_FREQ"])
+                duplex = "off"
                 offset = Decimal(0)
                 if out_freq < in_freq:
-                    duplex = '+'
+                    duplex = "+"
                     offset = in_freq - out_freq
                 elif out_freq > in_freq:
-                    duplex = '-'
+                    duplex = "-"
                     offset = out_freq - in_freq
                 tone = None
-                if row['CTCSS_IN']:
-                    tone = 'Tone'
-                elif row['DCS_CDCSS']:
-                    tone = 'DTCS'
+                if row["CTCSS_IN"]:
+                    tone = "Tone"
+                elif row["DCS_CDCSS"]:
+                    tone = "DTCS"
                 mode = None
-                if row['FM_WIDE'] == 'Y':
-                    mode = 'FM'
-                elif row['FM_NARROW'] == 'Y':
-                    mode = 'NFM'
+                if row["FM_WIDE"] == "Y":
+                    mode = "FM"
+                elif row["FM_NARROW"] == "Y":
+                    mode = "NFM"
                 else:
                     continue
-                if 'Y' in (
-                        row['DSTAR_DV'],
-                        row['DSTAR_DD'],
-                        row['DMR'],
-                        row['FUSION'],
-                        row['P25_PHASE_1'],
-                        row['P25_PHASE_2'],
-                        row['NXDN_DIGITAL'],
-                        row['ATV'],
-                        row['DATV'],
-                        ):
+                if "Y" in (
+                    row["DSTAR_DV"],
+                    row["DSTAR_DD"],
+                    row["DMR"],
+                    row["FUSION"],
+                    row["P25_PHASE_1"],
+                    row["P25_PHASE_2"],
+                    row["NXDN_DIGITAL"],
+                    row["ATV"],
+                    row["DATV"],
+                ):
                     # These are not Analog modes
                     continue
-                w.writerow({
-                    'Location': i,
-                    # 'Name': ' '.join((row['CALL'], row['CITY'])),
-                    'Name': row['CALL'],
-                    'Frequency': row['OUTPUT_FREQ'],
-                    'Duplex': duplex,
-                    'Offset': drop_decimals(offset),
-                    'Tone': tone,
-                    'rToneFreq': row['CTCSS_IN'] or '88.5',
-                    'cToneFreq': row['CTCSS_OUT'] or '88.5',
-                    'DtcsCode': row['DCS_CDCSS'] or '23',
-                    'DtcsPolarity': 'NN',
-                    'Mode': mode,
-                    # 'Comment': ' / '.join((row['CITY'], row['LOCALE'],
-                    #                        row['SPONSOR']))
-                    })
+                w.writerow(
+                    {
+                        "Location": i,
+                        # 'Name': ' '.join((row['CALL'], row['CITY'])),
+                        "Name": row["CALL"],
+                        "Frequency": row["OUTPUT_FREQ"],
+                        "Duplex": duplex,
+                        "Offset": drop_decimals(offset),
+                        "Tone": tone,
+                        "rToneFreq": row["CTCSS_IN"] or "88.5",
+                        "cToneFreq": row["CTCSS_OUT"] or "88.5",
+                        "DtcsCode": row["DCS_CDCSS"] or "23",
+                        "DtcsPolarity": "NN",
+                        "Mode": mode,
+                        # 'Comment': ' / '.join((row['CITY'], row['LOCALE'],
+                        #                        row['SPONSOR']))
+                    }
+                )
                 i += 1
 
 f.close()

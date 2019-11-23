@@ -10,19 +10,19 @@ from sys import argv
 # "NXDN_DIGITAL","NXDN_MIXED","NXDN_RAN","ATV","DATV","RACES","ARES","WX",
 # "URL","LATITUDE","LONGITUDE","EXPIRATION_DATE","COMMENT"
 
-FORMAT = '%-6s%10.4f%10.4f % .2f'
+FORMAT = "%-6s%10.4f%10.4f % .2f"
 
 
 def error(row):
-    o = Decimal(row['OUTPUT_FREQ'])
-    i = Decimal(row['INPUT_FREQ'])
+    o = Decimal(row["OUTPUT_FREQ"])
+    i = Decimal(row["INPUT_FREQ"])
     offset = i - o
-    print((FORMAT + ' ERROR!') % (row['CALL'], o, i, offset))
+    print((FORMAT + " ERROR!") % (row["CALL"], o, i, offset))
 
 
 d = []
 for arg in argv[1:]:
-    c = open(arg, 'r')
+    c = open(arg, "r")
     # Discard the ARRL DATA_SPEC_VERSION line
     c.readline()
     d.extend(DictReader(c))
@@ -30,67 +30,67 @@ for arg in argv[1:]:
 
 # https://www.wwara.org/WWARA_BAND_PLAN_2016_07_06.pdf
 for row in d:
-    o = Decimal(row['OUTPUT_FREQ'])
-    i = Decimal(row['INPUT_FREQ'])
+    o = Decimal(row["OUTPUT_FREQ"])
+    i = Decimal(row["INPUT_FREQ"])
     offset = i - o
 
     # 10m Band
     # 29.6200 - 29.6800 Repeater Outputs
-    if o >= Decimal('29.62') and o <= Decimal('29.68'):
+    if o >= Decimal("29.62") and o <= Decimal("29.68"):
         # 29.5200 - 29.5800 Repeater Inputs
-        if offset != Decimal('-0.1'):
+        if offset != Decimal("-0.1"):
             error(row)
 
     # 6m Band
     # 52.8100 - 53.9900 FM Repeater Outputs
     # Paired with repeater inputs -1.7MHz
-    elif o >= Decimal('52.81') and o <= Decimal('53.99'):
+    elif o >= Decimal("52.81") and o <= Decimal("53.99"):
         # 51.1000 - 52.2900 FM Repeater Inputs
-        if offset != Decimal('-1.7'):
+        if offset != Decimal("-1.7"):
             error(row)
 
     # 2m Band
     # 145.1000 - 145.2000 FM Repeater/Linear Translator Outputs
-    elif o >= Decimal('145.1') and o <= Decimal('145.2'):
+    elif o >= Decimal("145.1") and o <= Decimal("145.2"):
         # 144.5000 - 144.6000 FM Repeater/Linear Translator Inputs
-        if offset != Decimal('-0.6'):
+        if offset != Decimal("-0.6"):
             error(row)
     # 145.2000 - 145.4900 FM Repeater Outputs
-    elif o >= Decimal('145.2') and o <= Decimal('145.49'):
+    elif o >= Decimal("145.2") and o <= Decimal("145.49"):
         # 144.6000 - 144.9000 FM Repeater Inputs
-        if offset != Decimal('-0.6'):
+        if offset != Decimal("-0.6"):
             error(row)
     # 146.0050 Special UNBD Repeater Output #1
     # "We flipped the input & output due to interference issues at the site."
-    elif o == Decimal('146.6050'):
+    elif o == Decimal("146.6050"):
         # 146.6050 Special UNBD Repeater Input #1
-        if offset != Decimal('-0.6'):
+        if offset != Decimal("-0.6"):
             error(row)
     # 146.6200 - 147.3800 Repeater Outputs
-    elif o >= Decimal('146.62') and o <= Decimal('147.38'):
+    elif o >= Decimal("146.62") and o <= Decimal("147.38"):
         # 147.6100 - 147.9900 Repeater Inputs
-        if i >= Decimal('147.61') and i <= Decimal('147.99'):
-            if offset != Decimal('0.6'):
+        if i >= Decimal("147.61") and i <= Decimal("147.99"):
+            if offset != Decimal("0.6"):
                 error(row)
         # 146.0100 - 146.4000 Repeater Inputs
-        elif i >= Decimal('146.01') and i <= Decimal('146.4'):
-            if offset != Decimal('-0.6'):
+        elif i >= Decimal("146.01") and i <= Decimal("146.4"):
+            if offset != Decimal("-0.6"):
                 error(row)
         else:
             error(row)
     # 146.40625 - 146.50625 VNBD Repeater Outputs
-    elif o >= Decimal('146.40625') and o <= Decimal('146.50625'):
+    elif o >= Decimal("146.40625") and o <= Decimal("146.50625"):
         # 147.40625 - 147.50625 VNBD Repeater Inputs
-        if offset != Decimal('1'):
+        if offset != Decimal("1"):
             error(row)
     # (Reversed)
-    elif o >= Decimal('147.40625') and o <= Decimal('147.50625'):
-        if offset != Decimal('-1'):
+    elif o >= Decimal("147.40625") and o <= Decimal("147.50625"):
+        if offset != Decimal("-1"):
             error(row)
     # 147.9950 Special UNBD Repeater Output #2
-    elif o == Decimal('147.995'):
+    elif o == Decimal("147.995"):
         # 147.3950 Special UNBD Repeater Input #2
-        if offset != Decimal('-0.6'):
+        if offset != Decimal("-0.6"):
             error(row)
 
     # 1.25m Band
@@ -98,51 +98,53 @@ for row in d:
     # 224.0200 - 224.6200 Repeater Outputs
     # 224.6800 - 224.8200 Repeater Outputs
     # 224.8600 - 224.9800 Repeater Outputs
-    elif (o >= Decimal('223.78') and o <= Decimal('223.98')) \
-            or (o >= Decimal('224.02') and o <= Decimal('224.62')) \
-            or (o >= Decimal('224.635') and o <= Decimal('224.665')) \
-            or (o >= Decimal('224.68') and o <= Decimal('224.82')) \
-            or (o >= Decimal('224.86') and o <= Decimal('224.98')):
+    elif (
+        (o >= Decimal("223.78") and o <= Decimal("223.98"))
+        or (o >= Decimal("224.02") and o <= Decimal("224.62"))
+        or (o >= Decimal("224.635") and o <= Decimal("224.665"))
+        or (o >= Decimal("224.68") and o <= Decimal("224.82"))
+        or (o >= Decimal("224.86") and o <= Decimal("224.98"))
+    ):
         # 222.1800 - 222.3800 Repeater Inputs
         # 222.4200 - 223.0200 Repeater Inputs
         # 223.0800 - 223.2200 Repeater Inputs
         # 223.2600 - 223.3800 Repeater Inputs
-        if offset != Decimal('-1.6'):
+        if offset != Decimal("-1.6"):
             error(row)
 
     # 70cm Band
     # 440.0000 - 445.0000 Repeater Outputs, Links and Simplex
-    elif o >= Decimal('440') and o <= Decimal('445'):
+    elif o >= Decimal("440") and o <= Decimal("445"):
         # 445.0000 - 450.0000 Repeater Inputs, Links and Simplex
-        if offset != Decimal('5'):
+        if offset != Decimal("5"):
             error(row)
 
     # 33cm Band
     # 927.3000 - 928.0000 Repeater Outputs
-    elif o >= Decimal('927.3') and o <= Decimal('928'):
+    elif o >= Decimal("927.3") and o <= Decimal("928"):
         # 902.3000 - 903.0000 Repeater Inputs
-        if offset != Decimal('-25'):
+        if offset != Decimal("-25"):
             error(row)
 
     # 23cm Band
     # 1247.000 - 1252.000 D-STAR DD Mode Repeaters
-    elif o >= Decimal('1247') and o <= Decimal('1252'):
+    elif o >= Decimal("1247") and o <= Decimal("1252"):
         # D-STAR DD
-        if offset != Decimal('0'):
+        if offset != Decimal("0"):
             error(row)
     # 1290.000 - 1295.000 Repeater Outputs
-    elif o >= Decimal('1290') and o <= Decimal('1295'):
+    elif o >= Decimal("1290") and o <= Decimal("1295"):
         # 1270.000 - 1275.000 Repeater Inputs
-        if offset != Decimal('-20'):
+        if offset != Decimal("-20"):
             error(row)
     # 1252.000 - 1258.000 ATV #2
-    elif o >= Decimal('1252') and o <= Decimal('1258'):
+    elif o >= Decimal("1252") and o <= Decimal("1258"):
         # 434.0000 Video Carrier for ATV
-        if i == Decimal('434'):
+        if i == Decimal("434"):
             pass
         else:
             error(row)
     else:
         error(row)
         continue
-    print(FORMAT % (row['CALL'], o, i, offset))
+    print(FORMAT % (row["CALL"], o, i, offset))
