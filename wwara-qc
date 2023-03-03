@@ -57,18 +57,21 @@ RULES = [
     # (ajorg) TODO
     # * 144.53/145.13 and 144.69/145.29 Shared Non-Protected
     #   (SNP) repeater pair
+    # (ajorg) Based on coordinated pairs, center frequencies are
+    #         145.1100 - 145.1900
     {
-        "low": Decimal("145.1"),
-        "high": Decimal("145.2"),
+        "low": Decimal("145.11"),
+        "high": Decimal("145.19"),
         "offset": Decimal("-0.6"),
         "spacing": Decimal("20"),
     },
     # 2-Meter Band
     # 145.2000 - 145.4900 FM Repeater outputs
+    # (ajorg) 145.2100 - ?
     # 144.6000 - 144.9000 FM Repeater inputs
     # (ajorg)  - 144.8900 ?
     {
-        "low": Decimal("145.2"),
+        "low": Decimal("145.21"),
         "high": Decimal("145.49"),
         "offset": Decimal("-0.6"),
         "spacing": Decimal("20"),
@@ -117,17 +120,19 @@ RULES = [
     # },
     # 2-Meter Band
     # 146.0100 - 146.4000 Repeater inputs
+    # (ajorg) 146.0200 - 146.4000 Repeater inputs (center frequencies)
     {
-        "low": Decimal("146.61"),
+        "low": Decimal("146.62"),
         "high": Decimal("147"),
         "offset": Decimal("-0.6"),
         "spacing": Decimal("20"),
     },
     # 2-Meter Band
     # 147.6100 - 147.9900 Repeater inputs
+    # (ajorg) 147.6000 - 147.98 Repeater inputs (center frequencies)
     {
-        "low": Decimal("147.01"),
-        "high": Decimal("147.39"),
+        "low": Decimal("147.00"),
+        "high": Decimal("147.38"),
         "offset": Decimal("0.6"),
         "spacing": Decimal("20"),
     },
@@ -173,14 +178,6 @@ RULES = [
     # 440.0000 - 445.0000 Repeater outputs, links and simplex
     # 445.0000 - 450.0000 Repeater inputs, links and simplex
     # * NBFM channel spacing is 25 kHz, VNBD spacing is 12.5 kHz.
-    # (ajorg) 440.0500 - 444.9750 W (NB) Rptr Outputs
-    # (ajorg) 445.0500 - 449.9750 W (NB) Rptr Inputs
-    {
-        "low": Decimal("440.05"),
-        "high": Decimal("444.975"),
-        "offset": Decimal("5"),
-        "spacing": Decimal("25"),
-    },
     # (ajorg) 440.0125 - 444.9875 N (VNBD) Rptr Outputs
     # (ajorg) 445.0125 - 449.9875 N (VNBD) Rptr Inputs
     {
@@ -189,34 +186,45 @@ RULES = [
         "offset": Decimal("5"),
         "spacing": Decimal("12.5"),
     },
+    # (ajorg) 440.0500 - 444.9750 W (NB) Rptr Outputs
+    # (ajorg) 445.0500 - 449.9750 W (NB) Rptr Inputs
+    {
+        "low": Decimal("440.05"),
+        "high": Decimal("444.975"),
+        "offset": Decimal("5"),
+        "spacing": Decimal("25"),
+    },
     # 70cm Band Plan
     # 440.0000 Shared Non-Protected Pair (SNP) #1 output
     # 445.0000 Shared Non-Protected Pair (SNP) #1 input
-    {
-        "low": Decimal("440"),
-        "high": Decimal("440"),
-        "offset": Decimal("5"),
-        "spacing": Decimal("0"),
-    },
+    # TODO SNPs
+    # {
+    #    "low": Decimal("440"),
+    #    "high": Decimal("440"),
+    #    "offset": Decimal("5"),
+    #    "spacing": Decimal("0"),
+    # },
     # 70cm Band Plan
     # 440.7000 - 440.7750 Narrowband digital repeater outputs
     # 445.7000 - 445.7750 Narrowband digital repeater inputs
     # * All channels spacing is VNBD or 12.5 kHz.
+    # (ajorg) Last channel in this range is 440.7875
     {
         "low": Decimal("440.7"),
-        "high": Decimal("440.775"),
+        "high": Decimal("440.7875"),
         "offset": Decimal("5"),
         "spacing": Decimal("12.5"),
     },
     # 70cm Band Plan
     # 443.0000 Shared Non-Protected Pair (SNP) #2 output
     # 448.0000 Shared Non-Protected Pair (SNP) #2 input
-    {
-        "low": Decimal("443"),
-        "high": Decimal("443"),
-        "offset": Decimal("5"),
-        "spacing": Decimal("0"),
-    },
+    # TODO SNPs
+    # {
+    #    "low": Decimal("443"),
+    #    "high": Decimal("443"),
+    #    "offset": Decimal("5"),
+    #    "spacing": Decimal("0"),
+    # },
     # 33cm MHz Band Plan
     # 927.3000 - 928.0000 Repeater Outputs
     # 902.3000 - 903.0000 Repeater inputs
@@ -230,7 +238,7 @@ RULES = [
     # 23cm MHz Band Plan
     # 1247.000 - 1252.000 D-STAR DD mode repeaters
     # * All FM simplex and repeater channels are on 25kHz spacing
-    # (ajorg) DD repeaters are simplex
+    # (ajorg) DD repeaters are simplex?
     {
         "low": Decimal("1247"),
         "high": Decimal("1252"),
@@ -325,7 +333,11 @@ def match(CALL, OUTPUT, INPUT, LOCALE=None):
     for rule in RULES:
         if rule["low"] <= OUTPUT <= rule["high"]:
             if offset == rule["offset"]:
-                print(FORMAT.format(CALL, OUTPUT, INPUT, offset, ""))
+                comment = ""
+                splat = (OUTPUT - rule["low"]) % ((rule["spacing"] / 1000) or 1)
+                if splat:
+                    comment = " ERROR? " + str(splat)
+                print(FORMAT.format(CALL, OUTPUT, INPUT, offset, comment))
                 return
         elif (
             (rule["low"] + rule["offset"]) <= OUTPUT <= (rule["high"] + rule["offset"])
