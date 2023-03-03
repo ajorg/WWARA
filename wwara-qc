@@ -14,7 +14,7 @@ from zipfile import ZipFile
 # "NXDN_DIGITAL","NXDN_MIXED","NXDN_RAN","ATV","DATV","RACES","ARES","WX",
 # "URL","LATITUDE","LONGITUDE","EXPIRATION_DATE","COMMENT"
 
-FORMAT = "%-6s%10.4f%10.4f % .2f"
+FORMAT = "{:6}{:10.4f}{:10.4f} {:+.2f}{}"
 
 # Comments are taken from the WWARA Band Plan dated 12/18/21
 # And WWARA 70cm Band Plan date November 2020
@@ -266,28 +266,94 @@ RULES = [
     },
 ]
 
-EXCEPTIONS = [
+EXCEPTIONS = {
     # FIXME hack for ATV (cross-band)
-    {
-        "callsign": "WW7ATS",
-        "output": Decimal("1253.25"),
-        "input": Decimal("434"),
-        "comment": "ATV",
+    ("WW7ATS", Decimal("1253.25"), Decimal("434")): {"comment": "ATV"},
+}
+ERRORS = {
+    # KC7IYE   53.0700   51.6700 -1.40 ERROR!
+    ("KC7IYE", Decimal("53.07"), Decimal("51.67")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=13:13"
     },
-    # TODO support reversed pairs?
-    {
-        "callsign": "N7IH",
-        "output": Decimal("147.4875"),
-        "input": Decimal("146.4875"),
-        "comment": "REVERSED",
+    # KG7MOY  147.0000  147.6000  0.60 ERROR!
+    ("KG7MOY", Decimal("147"), Decimal("147.6")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=3:3"
     },
-    {
-        "callsign": "NW7DR",
-        "output": Decimal("147.4625"),
-        "input": Decimal("146.4625"),
-        "comment": "REVERSED",
+    # WA6MPG  224.9800  222.3800 -2.60 ERROR!
+    # https://groups.io/g/wwara/message/434
+    ("WA6MPG", Decimal("224.98"), Decimal("222.38")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=4:4"
     },
-]
+    # K7DKK   442.2750  447.4250 +5.15 ERROR!
+    ("K7DKK", Decimal("442.275"), Decimal("447.425")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=7:7"
+    },
+    # W7ACS   442.8750  447.8250 +4.95 ERROR!
+    ("W7ACS", Decimal("442.875"), Decimal("447.825")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=6:6"
+    },
+    # KG7OCP  443.3500  447.3500 +4.00 ERROR!
+    ("KG7OCP", Decimal("443.35"), Decimal("447.35")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=8:8"
+    },
+    # WA7FW   443.8500  447.8500 +4.00 ERROR!
+    ("WA7FW", Decimal("443.85"), Decimal("447.85")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=9:9"
+    },
+    # N7LNS   927.2125  902.2125 -25.00 ERROR!
+    ("N7LNS", Decimal("927.2125"), Decimal("902.2125")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=10:10"
+    },
+    # K7CH    927.2500  902.2500 -25.00 ERROR!
+    ("K7CH", Decimal("927.25"), Decimal("902.25")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=11:11"
+    },
+    # N7FSP  1292.3000 1267.3000 -25.00 ERROR!
+    ("N7FSP", Decimal("1292.3"), Decimal("1267.3")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=12:12"
+    },
+    # W7PIG   441.0500  445.0500 +4.00 ERROR!
+    ("W7PIG", Decimal("441.05"), Decimal("445.05")): {
+        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=5:5"
+    },
+}
+
+
+def match(CALL, OUTPUT, INPUT, LOCALE=None):
+    offset = INPUT - OUTPUT
+
+    for rule in RULES:
+        if rule["low"] <= OUTPUT <= rule["high"]:
+            if offset == rule["offset"]:
+                print(FORMAT.format(CALL, OUTPUT, INPUT, offset, ""))
+                return
+        elif (
+            (rule["low"] + rule["offset"]) <= OUTPUT <= (rule["high"] + rule["offset"])
+        ):
+            if offset == -rule["offset"]:
+                print(FORMAT.format(CALL, OUTPUT, INPUT, offset, " REVERSED"))
+                return
+
+    key = (CALL, OUTPUT, INPUT)
+    if key in EXCEPTIONS:
+        print(
+            FORMAT.format(CALL, OUTPUT, INPUT, offset, " " + EXCEPTIONS[key]["comment"])
+        )
+        return
+    if key in ERRORS:
+        ERRORS[key]["found"] = True
+        print(
+            FORMAT.format(
+                CALL, OUTPUT, INPUT, offset, " ERROR! " + ERRORS[key]["comment"]
+            )
+        )
+        return
+    # TODO: Actually deal with links
+    if LOCALE == "LINK":
+        print(FORMAT.format(CALL, OUTPUT, INPUT, offset, " LINK"))
+        return
+
+    print(FORMAT.format(CALL, OUTPUT, INPUT, offset, " ERROR!"))
 
 
 with urlopen("https://www.wwara.org/DataBaseExtract.zip") as RESPONSE:
@@ -297,8 +363,10 @@ with urlopen("https://www.wwara.org/DataBaseExtract.zip") as RESPONSE:
 
 D = []
 for NAME in ZIPFILE.namelist():
-    if not NAME.endswith(".csv"):
+    if not NAME.endswith(".csv") or "Expire" in NAME:
         continue
+    # if "-pending-" not in NAME:
+    #    continue
     # pending = bool("-pending-" in name)
     with ZIPFILE.open(NAME, "r") as CSV:
         # Remove the DATA_SPEC_VERSION header line from the .csv
@@ -306,22 +374,13 @@ for NAME in ZIPFILE.namelist():
         D.extend(DictReader(codecs.getreader("us-ascii")(CSV)))
 
 for row in D:
-    OUTPUT = Decimal(row["OUTPUT_FREQ"])
-    INPUT = Decimal(row["INPUT_FREQ"])
-    offset = INPUT - OUTPUT
+    match(
+        row["CALL"],
+        Decimal(row["OUTPUT_FREQ"]),
+        Decimal(row["INPUT_FREQ"]),
+        row["LOCALE"],
+    )
 
-    matched = False
-    for exception in EXCEPTIONS:
-        if OUTPUT == exception["output"] and INPUT == exception["input"] and exception["callsign"] == row["CALL"]:
-            print((FORMAT + " %s") % (row["CALL"], OUTPUT, INPUT, offset, exception["comment"]))
-            matched = True
-            break
-
-    for rule in RULES:
-        if rule["low"] <= OUTPUT <= rule["high"]:
-            if offset == rule["offset"]:
-                print(FORMAT % (row["CALL"], OUTPUT, INPUT, offset))
-                matched = True
-            break
-    if not matched:
-        print((FORMAT + " ERROR!") % (row["CALL"], OUTPUT, INPUT, offset))
+for key, value in ERRORS.items():
+    if not value.get("found"):
+        print("{:6}{:10.4f}{:10.4f} RESOLVED".format(*key))
