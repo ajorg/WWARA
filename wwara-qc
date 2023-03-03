@@ -77,6 +77,14 @@ RULES = [
         "spacing": Decimal("20"),
     },
     # 2-Meter Band
+    # (proposed) 145.1000 - 145.4875 NFM Repeater outputs
+    {
+        "low": Decimal("145.1"),
+        "high": Decimal("145.4875"),
+        "offset": Decimal("-0.6"),
+        "spacing": Decimal("12.5"),
+    },
+    # 2-Meter Band
     # 146.0050 Special UNBD Repeater Output #1
     # 146.6050 Special UNBD Repeater Input #1
     # "We flipped the input & output due to interference issues at the site."
@@ -112,12 +120,7 @@ RULES = [
     # 146.6200 - 147.3800 Repeater outputs
     # * Repeater channels are on odd frequencies below 146 MHz
     #   and even frequencies above 146 MHz
-    # {
-    #    "low": Decimal("146.62"),
-    #    "high": Decimal("147.38"),
-    #    "offset": Decimal(""), # ±0.6
-    #    "spacing": Decimal("20"),
-    # },
+    #
     # 2-Meter Band
     # 146.0100 - 146.4000 Repeater inputs
     # (ajorg) 146.0200 - 146.4000 Repeater inputs (center frequencies)
@@ -128,6 +131,14 @@ RULES = [
         "spacing": Decimal("20"),
     },
     # 2-Meter Band
+    # (proposed) 146.6250 - 146.9875 NFM Repeater outputs
+    {
+        "low": Decimal("146.625"),
+        "high": Decimal("146.9875"),
+        "offset": Decimal("-0.6"),
+        "spacing": Decimal("12.5"),
+    },
+    # 2-Meter Band
     # 147.6100 - 147.9900 Repeater inputs
     # (ajorg) 147.6000 - 147.98 Repeater inputs (center frequencies)
     {
@@ -135,6 +146,14 @@ RULES = [
         "high": Decimal("147.38"),
         "offset": Decimal("0.6"),
         "spacing": Decimal("20"),
+    },
+    # 2-Meter Band
+    # (proposed) 147.0000 - 147.3875 NFM Repeater outputs
+    {
+        "low": Decimal("146.625"),
+        "high": Decimal("146.9875"),
+        "offset": Decimal("0.6"),
+        "spacing": Decimal("12.5"),
     },
     # 1.25m MHz Band Plan
     # 223.7800 - 223.9800 Repeater Outputs
