@@ -19,7 +19,7 @@ FORMAT = "{:6}{:10.4f}{:10.4f} {:+.2f}{}"
 # Comments are taken from the WWARA Band Plan dated 12/18/21
 # And WWARA 70cm Band Plan date November 2020
 # Also https://www.wwara.org/WWARA_BAND_PLAN_2016_07_06.pdf
-RULES = [
+REPEATERS = [
     # 10-Meter Band
     # * 20kHz channel spacing
     # 29.6200 - 29.6800 Repeater Outputs 20 kHz Spacing
@@ -58,7 +58,8 @@ RULES = [
     # * 144.53/145.13 and 144.69/145.29 Shared Non-Protected
     #   (SNP) repeater pair
     # (ajorg) Based on coordinated pairs, center frequencies are
-    #         145.1100 - 145.1900
+    #         145.1100 - 145.1900 FM Repeater/Linear Translator outputs
+    #         144.5100 - 144.5900 FM Repeater/Linear Translator inputs
     {
         "low": Decimal("145.11"),
         "high": Decimal("145.19"),
@@ -83,6 +84,7 @@ RULES = [
         "high": Decimal("145.4875"),
         "offset": Decimal("-0.6"),
         "spacing": Decimal("12.5"),
+        "bandwidth": Decimal("12.5"),
     },
     # 2-Meter Band
     # 146.0050 Special UNBD Repeater Output #1
@@ -94,6 +96,7 @@ RULES = [
         "high": Decimal("146.605"),
         "offset": Decimal("-0.6"),
         "spacing": Decimal("0"),
+        "bandwidth": Decimal("6.25"),
     },
     # 2-Meter Band
     # 147.9950 Special UNBD Repeater Output #2
@@ -104,6 +107,7 @@ RULES = [
         "high": Decimal("147.995"),
         "offset": Decimal("-0.6"),
         "spacing": Decimal("0"),
+        "bandwidth": Decimal("6.25"),
     },
     # 2-Meter Band
     # 146.40625 - 146.50625 VNBD Repeater Outputs
@@ -115,6 +119,7 @@ RULES = [
         "high": Decimal("146.5"),
         "offset": Decimal("1"),
         "spacing": Decimal("12.5"),
+        "bandwidth": Decimal("12.5"),
     },
     # 2-Meter Band
     # 146.6200 - 147.3800 Repeater outputs
@@ -137,6 +142,7 @@ RULES = [
         "high": Decimal("146.9875"),
         "offset": Decimal("-0.6"),
         "spacing": Decimal("12.5"),
+        "bandwidth": Decimal("12.5"),
     },
     # 2-Meter Band
     # 147.6100 - 147.9900 Repeater inputs
@@ -154,6 +160,7 @@ RULES = [
         "high": Decimal("146.9875"),
         "offset": Decimal("0.6"),
         "spacing": Decimal("12.5"),
+        "bandwidth": Decimal("12.5"),
     },
     # 1.25m MHz Band Plan
     # 223.7800 - 223.9800 Repeater Outputs
@@ -204,6 +211,7 @@ RULES = [
         "high": Decimal("444.9875"),
         "offset": Decimal("5"),
         "spacing": Decimal("12.5"),
+        "bandwidth": Decimal("12.5"),
     },
     # (ajorg) 440.0500 - 444.9750 W (NB) Rptr Outputs
     # (ajorg) 445.0500 - 449.9750 W (NB) Rptr Inputs
@@ -233,6 +241,7 @@ RULES = [
         "high": Decimal("440.7875"),
         "offset": Decimal("5"),
         "spacing": Decimal("12.5"),
+        "bandwidth": Decimal("12.5"),
     },
     # 70cm Band Plan
     # 443.0000 Shared Non-Protected Pair (SNP) #2 output
@@ -302,10 +311,6 @@ ERRORS = {
     ("KC7IYE", Decimal("53.07"), Decimal("51.67")): {
         "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=13:13"
     },
-    # KG7MOY  147.0000  147.6000  0.60 ERROR!
-    ("KG7MOY", Decimal("147"), Decimal("147.6")): {
-        "comment": "https://docs.google.com/spreadsheets/d/1g-Zu05g6w6tif-wiV_KG0GVv6gk4HttjxFIjC5MU39U/edit#gid=0&range=3:3"
-    },
     # WA6MPG  224.9800  222.3800 -2.60 ERROR!
     # https://groups.io/g/wwara/message/434
     ("WA6MPG", Decimal("224.98"), Decimal("222.38")): {
@@ -345,11 +350,10 @@ ERRORS = {
     },
 }
 
-
 def match(CALL, OUTPUT, INPUT, LOCALE=None):
     offset = INPUT - OUTPUT
 
-    for rule in RULES:
+    for rule in REPEATERS:
         if rule["low"] <= OUTPUT <= rule["high"]:
             if offset == rule["offset"]:
                 comment = ""
