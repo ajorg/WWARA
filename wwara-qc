@@ -7,7 +7,7 @@ from urllib.request import urlopen
 from zipfile import ZipFile
 
 from channel import Channel
-from wwara_plan import REPEATERS, EXCEPTIONS, ERRORS
+from wwara.plan import REPEATERS, EXCEPTIONS, ERRORS
 
 
 def database():
