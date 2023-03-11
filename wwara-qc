@@ -8,27 +8,7 @@ from zipfile import ZipFile
 
 from channel import Channel
 from wwara.plan import REPEATERS, EXCEPTIONS, ERRORS
-
-
-def database():
-    with urlopen("https://www.wwara.org/DataBaseExtract.zip") as response:
-        # ZipFile requires a file-like object that supports seek
-        zipfile = ZipFile(BytesIO(response.read()))
-
-    for name in zipfile.namelist():
-        #if not name.endswith(".csv") or "Expire" in name:
-        if not name.endswith(".csv"):
-            continue
-        print(name)
-        with zipfile.open(name, "r") as csv:
-            # Remove the DATA_SPEC_VERSION header line from the .csv
-            csv.readline()
-            for row in DictReader(codecs.getreader("us-ascii")(csv)):
-                # TODO Handle links?
-                if row["LOCALE"] == "LINK":
-                    continue
-                yield Channel(row["CALL"], row["OUTPUT_FREQ"], row["INPUT_FREQ"])
-
+from wwara.database import coordinations
 
 def match(channel):
     for rule in REPEATERS:
@@ -36,7 +16,7 @@ def match(channel):
             return True
 
 
-for channel in database():
+for channel in coordinations(filenames=True):
     if match(channel):
         print(channel)
     elif match(~channel):
