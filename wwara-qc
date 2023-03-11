@@ -16,7 +16,8 @@ def database():
         zipfile = ZipFile(BytesIO(response.read()))
 
     for name in zipfile.namelist():
-        if not name.endswith(".csv") or "Expire" in name:
+        #if not name.endswith(".csv") or "Expire" in name:
+        if not name.endswith(".csv"):
             continue
         print(name)
         with zipfile.open(name, "r") as csv:

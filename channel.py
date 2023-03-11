@@ -34,4 +34,4 @@ class Channel:
                 comment += " WRONG OFFSET"
             if "spacing" not in match:
                 comment += " MISALIGNED"
-        return FORMAT.format(self.call, self.output, self.input, self.offset, comment)
+        return FORMAT.format(self.call, self.output, self.input, self.offset, comment).rstrip()
