@@ -141,12 +141,12 @@ def _entry(row, prefix=""):
     # 0|0x01: Squelch
     # 1|0x02: 25 KHz
     # 2|0x04: RX Only
-    # 3|0x08: 
+    # 3|0x08:
     # 4|0x10: All Skip
     # 5|0x20: Zone Skip
     # 6|0x40: Vox
     # 7|0x80: Power
-    # 1   = 00000001: LP 12.5 KHz 
+    # 1   = 00000001: LP 12.5 KHz
     # 17  = 00010001: LP 12.5 KHz All-skip
     # 129 = 10000001: HP 12.5 KHz
     # 131 = 10000011: HP 25 KHz
@@ -234,10 +234,13 @@ def _dedup_names(wlist):
                 tag = "70cm"
             elif dups["2m"] == 1 and entry["Rx Frequency"].startswith("1"):
                 tag = "2m"
-            elif (dups["70cm"] > 1 and entry["Rx Frequency"].startswith("4")) or (dups["2m"] > 1 and entry["Rx Frequency"].startswith("1")):
+            elif (dups["70cm"] > 1 and entry["Rx Frequency"].startswith("4")) or (
+                dups["2m"] > 1 and entry["Rx Frequency"].startswith("1")
+            ):
                 tag = freq
             length = 16 - len(tag)
             entry["Name"] = entry["Name"][:length].rstrip() + tag
+
 
 def convert(zipfile):
     """Converts a WWARA zipfile."""
