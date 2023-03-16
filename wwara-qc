@@ -1,30 +1,24 @@
 #!/usr/bin/env python3
-import codecs
-from csv import DictReader
-from decimal import Decimal
-from io import BytesIO
-from urllib.request import urlopen
-from zipfile import ZipFile
-
-from channel import Channel
 from wwara.plan import REPEATERS, EXCEPTIONS, ERRORS
 from wwara.database import coordinations
+
 
 def match(channel):
     for rule in REPEATERS:
         if channel in rule:
             return True
+    return False
 
 
 for channel in coordinations(filenames=True):
     if match(channel):
         print(channel)
     elif match(~channel):
-        print("{} REVERSED".format(channel))
+        print(f"{channel} REVERSED")
     else:
         if channel in EXCEPTIONS:
-            print("{} {}".format(channel, EXCEPTIONS[channel]["comment"]))
+            print(f"{channel} {EXCEPTIONS[channel]['comment']}")
         elif channel in ERRORS:
-            print("{} ERROR {}".format(channel, ERRORS[channel]["comment"]))
+            print(f"{channel} ERROR {ERRORS[channel]['comment']}")
         else:
             print(str(channel) + " ERROR!")

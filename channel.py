@@ -29,17 +29,17 @@ class Channel:
         return Channel(self.call, self.input, self.output, self.bandwidth)
 
     def __str__(self):
-        comment = ""
+        comment = []
         if self.rules:
             rule, match = sorted(
                 self.rules.items(), key=lambda x: len(x[1]), reverse=True
             )[0]
             if "offset" not in match:
-                comment += " WRONG OFFSET"
+                comment.append("WRONG OFFSET")
             if "spacing" not in match:
-                comment += " MISALIGNED"
+                comment.append("MISALIGNED")
             if "bandwidth" not in match:
-                comment += " TOO WIDE"
+                comment.append("TOO WIDE")
         return FORMAT.format(
-            self.call, self.output, self.input, self.offset, comment
+            self.call, self.output, self.input, self.offset, " ".join(comment)
         ).rstrip()

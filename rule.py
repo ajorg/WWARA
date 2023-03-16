@@ -1,7 +1,5 @@
 from decimal import Decimal
 
-from channel import Channel
-
 FORMAT = "{:4.4f} MHz - {:4.4f} MHz {:+.1f} KHz |{:.1f} KHz|"
 
 
@@ -49,5 +47,4 @@ class Rule:
             else:
                 return False
             return True
-        else:
-            return False
+        return False
