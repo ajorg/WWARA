@@ -149,10 +149,10 @@ EXCEPTIONS = {
     Channel("WW7ATS", "1253.25", "434"): {"comment": "ATV"},
 }
 ERRORS = {
-    # KC7IYE   53.0700   51.6700 -1.40 ERROR!
-    Channel("KC7IYE", "53.07", "51.67"): {"comment": "WRONG OFFSET?"},
 }
 
 if __name__ == "__main__":
+    from rule import HEADER
+    print(HEADER)
     for rule in REPEATERS:
         print(rule)
