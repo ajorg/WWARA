@@ -105,14 +105,15 @@ REPEATERS = [
     # * NBFM channel spacing is 25 kHz, VNBD spacing is 12.5 kHz.
     # (ajorg) 440.0125 - 444.9875 N (VNBD) Rptr Outputs
     # (ajorg) 445.0125 - 449.9875 N (VNBD) Rptr Inputs
-    #Rule("440.0125", "444.9875", "5", "12.5", "12.5"),
+    # Rule("440.0125", "444.9875", "5", "12.5", "12.5"),
     # [Revised] 70cm Band Plan
     # https://www.wwara.org/documents/70cmbandplan/
     # TODO SNPs and other exceptions
     Rule("440.0125", "440.0125", "5", "0", "12.5"),
     Rule("440.0375", "440.7875", "5", "12.5", "12.5"),
     Rule("440.0500", "440.6750", "5", "25", "25"),
-    Rule("440.9125", "440.9875", "5", "25", "25"),
+    #Rule("440.9125", "440.9875", "5", "25", "25"),
+    Rule("440.9250", "440.9750", "5", "25", "25"), # Maybe wrong in plan?
     Rule("440.9125", "440.9875", "5", "12.5", "12.5"),
     Rule("441.0125", "442.9875", "5", "12.5", "12.5"),
     Rule("441.0250", "442.9750", "5", "25", "25"),
@@ -120,7 +121,7 @@ REPEATERS = [
     Rule("442.0250", "444.9750", "5", "25", "25"),
     # (ajorg) 440.0500 - 444.9750 W (NB) Rptr Outputs
     # (ajorg) 445.0500 - 449.9750 W (NB) Rptr Inputs
-    #Rule("440.05", "444.975", "5", "25"),
+    # Rule("440.05", "444.975", "5", "25"),
     # 70cm Band Plan
     # 440.0000 Shared Non-Protected Pair (SNP) #1 output
     # 445.0000 Shared Non-Protected Pair (SNP) #1 input
@@ -131,7 +132,7 @@ REPEATERS = [
     # 445.7000 - 445.7750 Narrowband digital repeater inputs
     # * All channels spacing is VNBD or 12.5 kHz.
     # (ajorg) Last channel in this range is 440.7875
-    #Rule("440.7", "440.7875", "5", "12.5", "12.5"),
+    # Rule("440.7", "440.7875", "5", "12.5", "12.5"),
     # 70cm Band Plan
     # 443.0000 Shared Non-Protected Pair (SNP) #2 output
     # 448.0000 Shared Non-Protected Pair (SNP) #2 input

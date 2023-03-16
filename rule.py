@@ -43,6 +43,11 @@ class Rule:
                 channel.rules[self].add("spacing")
             else:
                 return False
+            # And does it have a small enough bandwidth?
+            if channel.bandwidth <= self.bandwidth:
+                channel.rules[self].add("bandwidth")
+            else:
+                return False
             return True
         else:
             return False

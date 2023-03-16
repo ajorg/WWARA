@@ -4,10 +4,11 @@ FORMAT = "{:6}{:10.4f}{:10.4f} {:+.2f} {}"
 
 
 class Channel:
-    def __init__(self, call, output, input):
+    def __init__(self, call, output, input, bandwidth="25"):
         self.call = call
         self.output = Decimal(output)
         self.input = Decimal(input)
+        self.bandwidth = Decimal(bandwidth)
         self.offset = self.input - self.output
         self.rules = {}
 
@@ -21,8 +22,11 @@ class Channel:
             and self.input == other.input
         )
 
+    def __lt__(self, other):
+        return self.output < other.output
+
     def __invert__(self):
-        return Channel(self.call, self.input, self.output)
+        return Channel(self.call, self.input, self.output, self.bandwidth)
 
     def __str__(self):
         comment = ""
@@ -34,4 +38,8 @@ class Channel:
                 comment += " WRONG OFFSET"
             if "spacing" not in match:
                 comment += " MISALIGNED"
-        return FORMAT.format(self.call, self.output, self.input, self.offset, comment).rstrip()
+            if "bandwidth" not in match:
+                comment += " TOO WIDE"
+        return FORMAT.format(
+            self.call, self.output, self.input, self.offset, comment
+        ).rstrip()

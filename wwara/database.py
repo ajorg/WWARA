@@ -25,4 +25,21 @@ def coordinations(filenames=False):
                 # TODO Handle links?
                 if row["LOCALE"] == "LINK":
                     continue
-                yield Channel(row["CALL"], row["OUTPUT_FREQ"], row["INPUT_FREQ"])
+                bandwidth = "25"
+                if "Y" in (
+                    row["FM_NARROW"],
+                    row["DSTAR_DV"],
+                    row["DSTAR_DD"],
+                    row["DMR"],
+                    row["FUSION"],
+                    row["P25_PHASE_1"],
+                    row["P25_PHASE_2"],
+                    row["NXDN_DIGITAL"],
+                    row["NXDN_MIXED"],
+                ):
+                    bandwidth = "12.5"
+                if row["FM_WIDE"] == "Y":
+                    bandwidth = "25"
+                yield Channel(
+                    row["CALL"], row["OUTPUT_FREQ"], row["INPUT_FREQ"], bandwidth
+                )
