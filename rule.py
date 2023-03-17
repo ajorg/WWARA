@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 HEADER = "BOTTOM - TOP +/-OFFSET |SPACING| [BANDWIDTH]"
-FORMAT = "{:4.4f} MHz - {:4.4f} MHz {:+.1f} KHz |{:.1f} KHz| [{:f} KHz]"
+FORMAT = "{:4.4f} MHz - {:4.4f} MHz {:+.1f} MHz |{:.1f} KHz| [{:f} KHz]"
 
 
 class Rule:
