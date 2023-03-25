@@ -1,11 +1,51 @@
 #!/usr/bin/env python3
 import codecs
 from csv import DictReader
+from decimal import Decimal
 from io import BytesIO
+from sys import stderr
 from urllib.request import urlopen
 from zipfile import ZipFile
 
 from channel import Channel
+
+
+def _bandwidth(row):
+    bandwidth = "25"
+    if "Y" in (
+        row["FM_NARROW"],
+        row["DSTAR_DV"],
+        row["DSTAR_DD"],
+        row["DMR"],
+        row["FUSION"],
+        row["P25_PHASE_1"],
+        row["P25_PHASE_2"],
+        row["NXDN_DIGITAL"],
+        row["NXDN_MIXED"],
+    ):
+        bandwidth = "12.5"
+    if row["FM_WIDE"] == "Y":
+        bandwidth = "25"
+    return Decimal(bandwidth)
+
+
+def _modes(row):
+    modes = []
+    if "Y" in (row["FM_WIDE"], row["FM_NARROW"]):
+        modes.append("FM")
+    if "Y" in (row["DSTAR_DV"], row["DSTAR_DD"]):
+        modes.append("DSTAR")
+    if row["DMR"] == "Y":
+        modes.append("DMR")
+    if row["FUSION"] == "Y":
+        modes.append("C4FM")
+    if "Y" in (row["P25_PHASE_1"], row["P25_PHASE_2"]):
+        modes.append("P25")
+    if "Y" in (row["NXDN_DIGITAL"], row["NXDN_MIXED"]):
+        modes.append("NXDN")
+    if row["ATV"] == "Y":
+        modes.append("ATV")
+    return modes
 
 
 def coordinations(filenames=False):
@@ -25,21 +65,14 @@ def coordinations(filenames=False):
                 # TODO Handle links?
                 if row["LOCALE"] == "LINK":
                     continue
-                bandwidth = "25"
-                if "Y" in (
-                    row["FM_NARROW"],
-                    row["DSTAR_DV"],
-                    row["DSTAR_DD"],
-                    row["DMR"],
-                    row["FUSION"],
-                    row["P25_PHASE_1"],
-                    row["P25_PHASE_2"],
-                    row["NXDN_DIGITAL"],
-                    row["NXDN_MIXED"],
-                ):
-                    bandwidth = "12.5"
-                if row["FM_WIDE"] == "Y":
-                    bandwidth = "25"
                 yield Channel(
-                    row["CALL"], row["OUTPUT_FREQ"], row["INPUT_FREQ"], bandwidth
+                    call=row["CALL"],
+                    output=Decimal(row["OUTPUT_FREQ"]),
+                    input=Decimal(row["INPUT_FREQ"]),
+                    bandwidth=_bandwidth(row),
+                    modes=_modes(row),
+                    output_tone=row["CTCSS_IN"],
+                    input_tone=row["CTCSS_OUT"],
+                    output_code=row["DCS_CDCSS"],
+                    input_code=row["DCS_CDCSS"],
                 )

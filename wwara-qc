@@ -12,7 +12,10 @@ def match(channel):
 
 for channel in coordinations(filenames=True):
     if match(channel):
-        print(channel)
+        if not channel.modes:
+            print(str(channel) + " ERROR NO MODES")
+        else:
+            print(channel)
     elif match(~channel):
         print(f"{channel} REVERSED")
     else:

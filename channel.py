@@ -4,12 +4,30 @@ FORMAT = "{:6}{:10.4f}{:10.4f} {:+.2f} {}"
 
 
 class Channel:
-    def __init__(self, call, output, input, bandwidth="25"):
+    def __init__(
+        self,
+        call,
+        output,
+        input,
+        bandwidth="25",
+        modes=("FM",),
+        output_tone=None,
+        input_tone=None,
+        output_code=None,
+        input_code=None,
+        dmr_color_code=None,
+    ):
         self.call = call
         self.output = Decimal(output)
         self.input = Decimal(input)
         self.bandwidth = Decimal(bandwidth)
+        self.modes = modes
         self.offset = self.input - self.output
+        self.output_tone = output_tone
+        self.input_tone = input_tone
+        self.output_code = output_code
+        self.input_code = input_code
+        self.dmr_color_code = dmr_color_code
         self.rules = {}
 
     def __hash__(self):
