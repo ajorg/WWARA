@@ -43,7 +43,12 @@ class Rule:
             else:
                 return False
             # And does it have a small enough bandwidth?
-            if channel.bandwidth <= self.bandwidth:
+            if (channel.bandwidth <= self.bandwidth) or (
+                # If the rule is ultra-narrow
+                # assume the channel is ultra-narrow
+                self.bandwidth
+                == Decimal("6.25")
+            ):
                 channel.rules[self].add("bandwidth")
             else:
                 return False
