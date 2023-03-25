@@ -56,6 +56,8 @@ def coordinations(filenames=False):
     for name in zipfile.namelist():
         if not name.endswith(".csv"):
             continue
+        if "Expire" in name:
+            continue
         if filenames:
             print(name)
         with zipfile.open(name, "r") as csv:
