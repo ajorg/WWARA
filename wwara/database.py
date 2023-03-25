@@ -78,3 +78,8 @@ def coordinations(filenames=False):
                     output_code=row["DCS_CDCSS"],
                     input_code=row["DCS_CDCSS"],
                 )
+
+
+if __name__ == "__main__":
+    for channel in coordinations(filenames=True):
+        print(channel)
