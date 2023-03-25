@@ -59,7 +59,7 @@ def coordinations(filenames=False):
         if "Expire" in name:
             continue
         if filenames:
-            print(name)
+            print(name, file=stderr)
         with zipfile.open(name, "r") as csv:
             # Remove the DATA_SPEC_VERSION header line from the .csv
             csv.readline()
