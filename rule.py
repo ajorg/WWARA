@@ -25,7 +25,9 @@ class Rule:
         )
 
     def __str__(self):
-        return FORMAT.format(self.low, self.high, self.offset, self.spacing, self.bandwidth)
+        return FORMAT.format(
+            self.low, self.high, self.offset, self.spacing, self.bandwidth
+        )
 
     def __contains__(self, channel):
         # Is the output in this rule's range?

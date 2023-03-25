@@ -148,11 +148,11 @@ EXCEPTIONS = {
     # FIXME hack for ATV (cross-band)
     Channel("WW7ATS", "1253.25", "434"): {"comment": "ATV"},
 }
-ERRORS = {
-}
+ERRORS = {}
 
 if __name__ == "__main__":
     from rule import HEADER
+
     print(HEADER)
     for rule in REPEATERS:
         print(rule)
