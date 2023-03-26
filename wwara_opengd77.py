@@ -4,7 +4,7 @@ import codecs
 import logging
 from csv import DictReader, DictWriter
 from decimal import Decimal
-from io import BytesIO, StringIO
+from io import BytesIO
 from sys import stdout, stderr
 from zipfile import ZipFile
 
