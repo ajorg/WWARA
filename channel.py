@@ -41,6 +41,11 @@ class Channel:
         self.input_code = input_code
         self.dmr_cc = dmr_cc
         self.c4fm_dsq = c4fm_dsq
+        if "C4FM" in self.modes:
+            if self.c4fm_dsq:
+                self.c4fm_dsq = Decimal(self.c4fm_dsq)
+            else:
+                self.c4fm_dsq = 00
         self.dstar_mode = dstar_mode
         self.p25_phase = p25_phase
         self.p25_nac = p25_nac

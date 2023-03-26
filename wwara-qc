@@ -47,9 +47,16 @@ for channel in coordinations(filenames=True):
             error = True
             comments.append("NO CC")
     if "C4FM" in channel.modes:
-        if not channel.c4fm_dsq:
-            error = True
+        if channel.c4fm_dsq is None:
+            # DSQ is obsoleted by DG-ID
             comments.append("NO DSQ")
+        # DSQ is limited to 1-126
+        # DG-ID is 0-99
+        # Neither is octal (AFAICT)
+        if not (0 <= channel.c4fm_dsq <= 99):
+            comments.append("DG-ID OUT OF RANGE")
+        if not (0 <= channel.c4fm_dsq <= 126):
+            comments.append("DSQ OUT OF RANGE")
     if "P25" in channel.modes:
         if not channel.p25_nac:
             error = True
