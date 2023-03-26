@@ -65,6 +65,8 @@ for channel in coordinations(filenames=True):
         if not channel.nxdn_ran:
             error = True
             comments.append("NO RAN")
+    if len(channel.modes) > 1:
+        comments.append("MULTIMODE")
     if channel.errors:
         error = True
         comments.extend(channel.errors)

@@ -122,10 +122,10 @@ class Channel:
             modes.append(f"NXDN {self.nxdn_ran}")
         if "ATV" in self.modes:
             modes.append("ATV")
-        mode = "|".join(modes) or "NONE"
+        mode = " & ".join(modes) or "NONE"
         _str = f"{self.name} {output} {offset} {mode}"
         if self.latitude and self.longitude:
-            _str += f" {self.latitude:.2f} {self.longitude:.2f}"
+            _str += f" ({self.latitude:.2f} {self.longitude:.2f})"
         return _str
 
     def distance(self, lat, lon):
