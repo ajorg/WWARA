@@ -147,6 +147,8 @@ REPEATERS = [
 EXCEPTIONS = {
     # FIXME hack for ATV (cross-band)
     Channel("WW7ATS", "1253.25", "434"): {"comment": "ATV"},
+    # AA7MI   440.7250 +5.00 FM TOO WIDE ERROR!
+    Channel("AA7MI", "440.725", "445.725"): {"comment": "KNOWN"},
 }
 ERRORS = {}
 
