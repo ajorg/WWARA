@@ -1,3 +1,4 @@
+from copy import copy
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 
@@ -31,7 +32,6 @@ class Channel:
         self.input = Decimal(input)
         self.bandwidth = Decimal(bandwidth)
         self.modes = modes
-        self.offset = self.input - self.output
         self.output_tone = output_tone
         if input_tone:
             self.input_tone = Decimal(input_tone)
@@ -53,6 +53,10 @@ class Channel:
             self.longitude = Decimal(longitude)
         self.rules = {}
 
+    @property
+    def offset(self):
+        return self.input - self.output
+
     def __hash__(self):
         return hash((self.call, self.output, self.input))
 
@@ -67,7 +71,9 @@ class Channel:
         return self.output < other.output
 
     def __invert__(self):
-        return Channel(self.call, self.input, self.output, self.bandwidth)
+        inverse = copy(self)
+        inverse.output, inverse.input = self.input, self.output
+        return inverse
 
     @property
     def name(self):
