@@ -2,6 +2,11 @@
 from wwara.plan import REPEATERS, EXCEPTIONS, ERRORS
 from wwara.database import coordinations
 
+LAT_LO = 45.90
+LAT_HI = 49.00
+LON_LO = -124.22
+LON_HI = -121.32
+
 
 def match(channel):
     for rule in REPEATERS:
@@ -10,18 +15,55 @@ def match(channel):
     return False
 
 
+def in_region(channel):
+    if not (LAT_LO < channel.latitude < LAT_HI):
+        return False
+    if not (LON_LO < channel.longitude < LON_HI):
+        return False
+    return True
+
+
 for channel in coordinations(filenames=True):
-    if match(channel):
-        if not channel.modes:
-            print(str(channel) + " ERROR NO MODES")
-        else:
-            print(channel)
-    elif match(~channel):
-        print(f"{channel} REVERSED")
-    else:
-        if channel in EXCEPTIONS:
-            print(f"{channel} {EXCEPTIONS[channel]['comment']}")
-        elif channel in ERRORS:
-            print(f"{channel} ERROR {ERRORS[channel]['comment']}")
-        else:
-            print(str(channel) + " ERROR!")
+    error = not match(channel)
+    comments = []
+    if match(~channel):
+        error = False
+        comments.append("REVERSED")
+    if not channel.modes:
+        error = True
+        comments.append("NO MODES")
+    if not in_region(channel):
+        error = True
+        comments.append("OUT OF BOUNDS")
+    if "FM" in channel.modes:
+        if not (channel.input_tone or channel.input_code):
+            error = True
+            comments.append("NO TONE/CODE")
+        if channel.input_tone and channel.input_code:
+            error = True
+            comments.append("AMBIGUOUS TONE/CODE")
+    if "DMR" in channel.modes:
+        if not channel.dmr_cc:
+            error = True
+            comments.append("NO CC")
+    if "C4FM" in channel.modes:
+        if not channel.c4fm_dsq:
+            error = True
+            comments.append("NO DSQ")
+    if "P25" in channel.modes:
+        if not channel.p25_nac:
+            error = True
+            comments.append("NO NAC")
+    if "NXDN" in channel.modes:
+        if not channel.nxdn_ran:
+            error = True
+            comments.append("NO RAN")
+    if channel.errors:
+        error = True
+        comments.extend(channel.errors)
+    if channel in EXCEPTIONS:
+        comments.append("KNOWN")
+    elif error:
+        comments.insert(0, "ERROR!")
+    comments = " ".join(comments)
+    print(f"{channel} {comments}")

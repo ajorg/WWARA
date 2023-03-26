@@ -67,16 +67,37 @@ def coordinations(filenames=False):
                 # TODO Handle links?
                 if row["LOCALE"] == "LINK":
                     continue
+                dmr_cc = row["DMR_COLOR_CODE"]
+                if dmr_cc:
+                    dmr_cc = Decimal(dmr_cc.lstrip("C"))
+                dstar_mode = None
+                if row["DSTAR_DV"] == "Y":
+                    dstar_mode = "DV"
+                elif row["DSTAR_DD"] == "Y":
+                    dstar_mode = "DD"
+                p25_phase = None
+                if row["P25_PHASE_2"] == "Y":
+                    p25_phase = 2
+                if row["P25_PHASE_1"] == "Y":
+                    p25_phase = 1
                 yield Channel(
                     call=row["CALL"],
                     output=Decimal(row["OUTPUT_FREQ"]),
                     input=Decimal(row["INPUT_FREQ"]),
                     bandwidth=_bandwidth(row),
                     modes=_modes(row),
-                    output_tone=row["CTCSS_IN"],
-                    input_tone=row["CTCSS_OUT"],
+                    output_tone=row["CTCSS_OUT"],
+                    input_tone=row["CTCSS_IN"],
                     output_code=row["DCS_CDCSS"],
                     input_code=row["DCS_CDCSS"],
+                    dmr_cc=dmr_cc,
+                    dstar_mode=dstar_mode,
+                    c4fm_dsq=row["FUSION_DSQ"],
+                    p25_phase=p25_phase,
+                    p25_nac=row["P25_NAC"],
+                    location=row["CITY"],
+                    latitude=row["LATITUDE"],
+                    longitude=row["LONGITUDE"],
                 )
 
 
