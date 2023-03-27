@@ -26,6 +26,7 @@ class Channel:
         location=None,
         latitude=None,
         longitude=None,
+        rx_only=False,
     ):
         self.call = call
         self.output = Decimal(output)
@@ -56,6 +57,7 @@ class Channel:
         self.longitude = None
         if longitude:
             self.longitude = Decimal(longitude)
+        self.rx_only = rx_only
         self.rules = {}
 
     @property
