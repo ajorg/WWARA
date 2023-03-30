@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+from decimal import Decimal
+from sys import argv
+
+from wwara.database import coordinations
+
+LAT = Decimal("47.80")
+LON = Decimal("-122.25")
+if len(argv) > 2:
+    LAT = Decimal(argv[1])
+    LON = Decimal(argv[2])
+
+for channel in sorted(coordinations(), key=lambda channel: channel.distance(LAT, LON)):
+    print(f"{channel} {channel.distance(LAT, LON):5.1f}km")

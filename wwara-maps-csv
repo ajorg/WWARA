@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+from csv import DictWriter
+from decimal import Decimal
+from wwara.database import coordinations
+
+FIELDNAMES = (
+    "Name",
+    "Call",
+    "Output",
+    "Offset",
+    "Mode",
+    "Access",
+    "Location",
+    "Latitude",
+    "Longitude",
+)
+LAYERS = {"VHF FM": {"low": 144, "high": 148, "mode": "FM"}}
+CHANNELS = coordinations()
+
+
+def rows(low, high, mode):
+    for channel in CHANNELS:
+        if not (low <= channel.input <= high) and mode not in channel.modes:
+            continue
+        output = str(channel.output).rstrip("0")
+        offset = f"{channel.offset:+.2f}".rstrip("0").rstrip(".")
+        access = None
+        if mode == "DMR":
+            access = f"CC{channel.dmr_cc}"
+        elif mode == "FM":
+            if channel.input_tone:
+                access = f"{channel.input_tone:.1f}"
+            elif channel.input_code:
+                access = f"D{channel.input_code}N"
+        name = f"{channel.call} {channel.location} {output} {offset} {mode} {access}"
+        yield {
+            "Name": name,
+            "Call": channel.call,
+            "Location": channel.location,
+            "Output": channel.output,
+            "Offset": channel.offset,
+            "Mode": mode,
+            "Access": access,
+            "Latitude": channel.latitude,
+            "Longitude": channel.longitude,
+        }
+
+
+for (
+    name,
+    layer,
+) in LAYERS.items():
+    with open(f"{name}.csv", "w", newline="") as csvfile:
+        writer = DictWriter(csvfile, fieldnames=FIELDNAMES)
+        writer.writeheader()
+        writer.writerows(rows(**layer))

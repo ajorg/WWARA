@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+from decimal import Decimal
+from json import load, dumps
+from sys import stderr
+from time import sleep
+from urllib.request import Request, urlopen
+
+from wwara.database import coordinations
+from channel import Channel
+
+HEADERS = {
+    "User-Agent": "wwara-qc/1.0 (github.com/ajorg/WWARA, andrew@jorgensenfamily.us)",
+}
+API_URL = "https://www.repeaterbook.com/api/export.php?country=United%20States&state="
+
+results = []
+for state in ("Washington", "Oregon"):
+    request = Request(API_URL + state, headers=HEADERS)
+    with urlopen(request) as response:
+        results.extend(load(response)["results"])
+
+for channel in coordinations(filenames=True):
+    found = False
+    candidates = set()
+    for result in results:
+        candidate = Channel(
+            result["Callsign"], result["Frequency"], result["Input Freq"]
+        )
+        if channel.call == result["Callsign"] or channel.output == Decimal(
+            result["Frequency"]
+        ):
+            candidates.add(candidate)
+        if channel == candidate:
+            found = result
+            break
+    if not found:
+        print(f"{channel} NOT FOUND")
+        for candidate in sorted(candidates):
+            print(f"  {candidate}")
