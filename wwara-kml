@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+from csv import DictWriter
+from decimal import Decimal
+from sys import stderr
+import xml.etree.ElementTree as ET
+from wwara.database import coordinations
+
+LAYERS = {
+    "VHF FM": {"low": 144, "high": 148, "mode": "FM"},
+    "UHF FM": {"low": 420, "high": 450, "mode": "FM"},
+    "VHF DMR": {"low": 144, "high": 148, "mode": "DMR"},
+    "UHF DMR": {"low": 420, "high": 450, "mode": "DMR"},
+}
+CHANNELS = list(coordinations())
+
+
+def layer(low, high, mode, folder):
+    for channel in CHANNELS:
+        if (not (low <= channel.input <= high)) or (mode not in channel.modes):
+            continue
+        output = str(channel.output).rstrip("0")
+        input = str(channel.input).rstrip("0")
+        offset = f"{channel.offset:+.2f}".rstrip("0").rstrip(".")
+        access = None
+        if mode == "DMR":
+            access = f"CC{channel.dmr_cc}"
+        elif mode == "FM":
+            if channel.input_tone:
+                access = f"{channel.input_tone:.1f}"
+            elif channel.input_code:
+                access = f"D{channel.input_code}N"
+        channel.name = (
+            f"{channel.call} {channel.location} {output} {offset} {mode} {access}"
+        )
+        if channel.latitude < 0:
+            channel.latitude = -channel.latitude
+        if channel.longitude > 0:
+            channel.longitude = -channel.longitude
+        placemark = ET.SubElement(folder, "Placemark")
+        name = ET.SubElement(placemark, "name")
+        name.text = channel.name
+        # description = ET.SubElement(placemark, "description")
+        # description.text = "TBD"
+        extended_data = ET.SubElement(placemark, "ExtendedData")
+        for k, v in {
+            "callsign": channel.call,
+            "location": channel.location,
+            "output": f"{output} MHz",
+            "input": f"{input} MHz",
+            "offset": f"{offset} MHz",
+            "mode": mode,
+            "access": access,
+        }.items():
+            data = ET.SubElement(extended_data, "Data", name=k)
+            value = ET.SubElement(data, "value")
+            value.text = v
+        # styleurl = ET.SubElement(placemark, "styleUrl")
+        # styleurl.text = "#repeater"
+        point = ET.SubElement(placemark, "Point")
+        coords = ET.SubElement(point, "coordinates")
+        coords.text = f"{channel.longitude},{channel.latitude},0"
+
+
+kml = ET.Element("kml", xmlns="http://www.opengis.net/kml/2.2")
+doc = ET.SubElement(kml, "Document")
+name = ET.SubElement(doc, "name")
+name.text = "WWARA Repeaters"
+# style = ET.SubElement(doc, "Style", id="repeater")
+# iconstyle = ET.SubElement(style, "IconStyle")
+# color = ET.SubElement(iconstyle, "color")
+# color.text = "ff1427a5"
+# scale = ET.SubElement(iconstyle, "scale")
+# scale.text = "1"
+# icon = ET.SubElement(iconstyle, "Icon")
+# href = ET.SubElement(icon, "href")
+# href.text = "https://maps.google.com/mapfiles/kml/shapes/placemark_circle.png"
+
+
+for name, parameters in LAYERS.items():
+    import xml.etree.ElementTree as ET
+
+    folder = ET.SubElement(doc, "Folder")
+    folder_name = ET.SubElement(folder, "name")
+    folder_name.text = name
+    layer(**parameters, folder=folder)
+
+tree = ET.ElementTree(kml)
+tree.write("WWARA Repeaters.kml")
