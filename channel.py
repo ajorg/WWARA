@@ -59,6 +59,7 @@ class Channel:
             self.longitude = Decimal(longitude)
         self.rx_only = rx_only
         self.rules = {}
+        self._name = None
 
     @property
     def offset(self):
@@ -84,7 +85,13 @@ class Channel:
 
     @property
     def name(self):
-        return f"{self.call} {self.location}"
+        if self._name is None:
+            self._name = f"{self.call} {self.location}"
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
 
     @property
     def errors(self):
