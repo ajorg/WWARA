@@ -250,7 +250,7 @@ def _dedup_names(
 
 
 def channels_csv(channels):
-    with open("Channels.csv", "w") as _channels_csv:
+    with open("Channels.csv", "w", newline="") as _channels_csv:
         writer = DictWriter(
             _channels_csv, fieldnames=GB3GFChannel.fieldnames, delimiter=";"
         )
@@ -269,7 +269,7 @@ def zones_csv(channels):
         "WWARA FM": {"mode": "FM", "low": 144, "high": 450},
         "WWARA DMR": {"mode": "DMR", "low": 144, "high": 450},
     }
-    with open("Zones.csv", "w") as _zones_csv:
+    with open("Zones.csv", "w", newline="") as _zones_csv:
         writer = DictWriter(_zones_csv, fieldnames=ZONES_FIELDNAMES, delimiter=";")
         writer.writeheader()
         for name, spec in zones.items():
