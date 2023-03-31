@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from csv import DictWriter
 from decimal import Decimal
+from sys import stderr
 from wwara.database import coordinations
 
 FIELDNAMES = (
@@ -14,7 +15,12 @@ FIELDNAMES = (
     "Latitude",
     "Longitude",
 )
-LAYERS = {"VHF FM": {"low": 144, "high": 148, "mode": "FM"}}
+LAYERS = {
+    "VHF FM": {"low": 144, "high": 148, "mode": "FM"},
+    "UHF FM": {"low": 420, "high": 450, "mode": "FM"},
+    "VHF DMR": {"low": 144, "high": 148, "mode": "DMR"},
+    "UHF DMR": {"low": 420, "high": 450, "mode": "DMR"},
+}
 CHANNELS = coordinations()
 
 
@@ -33,6 +39,10 @@ def rows(low, high, mode):
             elif channel.input_code:
                 access = f"D{channel.input_code}N"
         name = f"{channel.call} {channel.location} {output} {offset} {mode} {access}"
+        if channel.latitude < 0:
+            channel.latitude = -channel.latitude
+        if channel.longitude > 0:
+            channel.longitude = -channel.longitude
         yield {
             "Name": name,
             "Call": channel.call,
