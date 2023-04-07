@@ -56,6 +56,7 @@ class GD88DRSChannel(Channel):
         "TX QT/DQT",
         "APRS",
     )
+    name_length = NAME_LENGTH
     timeslot = 1  # Class variable so it can be varied... not sure
 
     def __init__(self, channel):
@@ -77,24 +78,6 @@ class GD88DRSChannel(Channel):
         )
         self._name = None
         self._number = 0
-
-    @property
-    def name(self):
-        if self._name is None:
-            self._name = " ".join((self.call, self.location))[:NAME_LENGTH]
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        self._name = value
-
-    @property
-    def number(self):
-        return self._number
-
-    @number.setter
-    def number(self, value):
-        self._number = value
 
     @property
     def _channel_type(self):
@@ -141,35 +124,6 @@ class GD88DRSChannel(Channel):
             return "Yes"
         return "No"
 
-    def __getitem__(self, key):
-        if key == self.name_k:
-            return self.name
-        if key == self.type_k:
-            return self._channel_type
-        if key == self.output_k:
-            return self._rx_frequency
-        raise KeyError(key)
-
-    def get(self, key, default=None):
-        for k, v in self.items():
-            if k == key:
-                return v
-        return default
-
-    def __setitem__(self, key, value):
-        if key == self.name_k:
-            self.name = value
-        elif key == self.number_k:
-            self.number = value
-        else:
-            raise KeyError(key)
-
-    def keys(self):
-        # This looks dumb, but the object keys() returns
-        # has properties that are easiest to implement
-        # this way.
-        return dict(self.items()).keys()
-
     def items(self):
         yield self.number_k, self.number
         yield self.type_k, self._channel_type
@@ -177,7 +131,7 @@ class GD88DRSChannel(Channel):
         yield self.output_k, self._rx_frequency
         yield self.input_k, self._tx_frequency
         yield "Power", "High"
-        yield "RX Only", "Off"
+        yield self.rx_only_k, "Off"
         yield "Alarm ACK", "Off"
         yield "Prompt", "Off"  # What?
         yield "PCT", "Patcs"  # Something to do with trunking
@@ -276,11 +230,11 @@ def _dedup_names(
 
 
 def channels_csv(channels):
-        writer = DictWriter(
-            stdout, fieldnames=GD88DRSChannel.fieldnames, delimiter=DELIMITER
-        )
-        writer.writeheader()
-        writer.writerows(channels)
+    writer = DictWriter(
+        stdout, fieldnames=GD88DRSChannel.fieldnames, delimiter=DELIMITER
+    )
+    writer.writeheader()
+    writer.writerows(channels)
 
 
 ZONES_FIELDNAMES = tuple(["Zone Name"] + ["Channel " + str(i) for i in range(1, 81)])
@@ -288,11 +242,12 @@ ZONES_FIELDNAMES = tuple(["Zone Name"] + ["Channel " + str(i) for i in range(1, 
 
 def zones_csv(channels):
     zones = {
+        "WWARA": {"mode": None, "low": 144, "high": 450},
+        "WWARA FM": {"mode": "FM", "low": 144, "high": 450},
+        "WWARA DMR": {"mode": "DMR", "low": 144, "high": 450},
         "WWARA VHF": {"mode": "FM", "low": 144, "high": 148},
         "WWARA 220": {"mode": "FM", "low": 222, "high": 225},
         "WWARA UHF": {"mode": "FM", "low": 420, "high": 450},
-        "WWARA FM": {"mode": "FM", "low": 144, "high": 450},
-        "WWARA DMR": {"mode": "DMR", "low": 144, "high": 450},
     }
     with open("Zones.csv", "w") as _zones_csv:
         writer = DictWriter(_zones_csv, fieldnames=ZONES_FIELDNAMES, delimiter=";")
@@ -304,7 +259,7 @@ def zones_csv(channels):
             for channel in channels:
                 if i > 80:
                     break
-                if spec["mode"] not in channel.modes:
+                if (spec["mode"] is not None) and (spec["mode"] not in channel.modes):
                     continue
                 if not (spec["low"] <= channel.input <= spec["high"]):
                     continue

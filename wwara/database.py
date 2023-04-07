@@ -34,7 +34,7 @@ def _modes(row):
     if "Y" in (row["FM_WIDE"], row["FM_NARROW"]):
         modes.append("FM")
     if "Y" in (row["DSTAR_DV"], row["DSTAR_DD"]):
-        modes.append("DSTAR")
+        modes.append("D-STAR")
     if row["DMR"] == "Y":
         modes.append("DMR")
     if row["FUSION"] == "Y":
