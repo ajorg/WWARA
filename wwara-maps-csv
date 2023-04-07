@@ -7,11 +7,10 @@ from wwara.database import coordinations
 FIELDNAMES = (
     "Name",
     "Call",
+    "Location",
     "Output",
     "Offset",
     "Mode",
-    "Access",
-    "Location",
     "Latitude",
     "Longitude",
 )
@@ -21,36 +20,20 @@ LAYERS = {
     "VHF DMR": {"low": 144, "high": 148, "mode": "DMR"},
     "UHF DMR": {"low": 420, "high": 450, "mode": "DMR"},
 }
-CHANNELS = coordinations()
+CHANNELS = list(coordinations())
 
 
 def rows(low, high, mode):
     for channel in CHANNELS:
-        if not (low <= channel.input <= high) and mode not in channel.modes:
+        if (not (low <= channel.input <= high)) or (mode not in channel.modes):
             continue
-        output = str(channel.output).rstrip("0")
-        offset = f"{channel.offset:+.2f}".rstrip("0").rstrip(".")
-        access = None
-        if mode == "DMR":
-            access = f"CC{channel.dmr_cc}"
-        elif mode == "FM":
-            if channel.input_tone:
-                access = f"{channel.input_tone:.1f}"
-            elif channel.input_code:
-                access = f"D{channel.input_code}N"
-        name = f"{channel.call} {channel.location} {output} {offset} {mode} {access}"
-        if channel.latitude < 0:
-            channel.latitude = -channel.latitude
-        if channel.longitude > 0:
-            channel.longitude = -channel.longitude
         yield {
-            "Name": name,
+            "Name": str(channel),
             "Call": channel.call,
             "Location": channel.location,
             "Output": channel.output,
             "Offset": channel.offset,
-            "Mode": mode,
-            "Access": access,
+            "Mode": channel.access,
             "Latitude": channel.latitude,
             "Longitude": channel.longitude,
         }
