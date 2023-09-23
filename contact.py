@@ -4,6 +4,7 @@ from decimal import Decimal
 class Contact:
     id_k = "ID"
     call_k = "Call"
+    timeslot_k = "Timeslot"
     first_name_k = "First Name"
     last_name_k = "Last Name"
     city_k = "City"
@@ -23,6 +24,7 @@ class Contact:
         self,
         id,
         call,
+        timeslot=None,
         first_name=None,
         last_name=None,
         city=None,
@@ -31,6 +33,7 @@ class Contact:
     ):
         self.id = Decimal(id)
         self.call = call
+        self.timeslot = timeslot
         self.first_name = first_name
         self.last_name = last_name
         self.city = city
