@@ -40,8 +40,12 @@ class Contact:
         self.state = state
         self.country = country
 
+    @property
+    def name(self):
+        return f"{self.call} {self.first_name}"
+
     def __str__(self):
-        return f"{self.id} {self.call} {self.first_name} {self.last_name}"
+        return f"{self.id} {self.name}"
 
     def __getitem__(self, key):
         if key not in self.fieldnames:
