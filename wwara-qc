@@ -24,6 +24,7 @@ def in_region(channel):
     return True
 
 
+SEEN = set()
 for channel in coordinations(filenames=True):
     error = not match(channel)
     comments = []
@@ -68,6 +69,14 @@ for channel in coordinations(filenames=True):
             comments.append("NO RAN")
     if len(channel.modes) > 1:
         comments.append("MULTIMODE")
+
+    # Should only show up once in the database
+    if channel in SEEN:
+        # Not counting this as an error because the equality operator is course
+        # error = True
+        comments.append("DUPLICATE")
+    SEEN.add(channel)
+
     if channel.errors:
         error = True
         comments.extend(channel.errors)
