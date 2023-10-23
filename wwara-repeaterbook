@@ -32,20 +32,38 @@ for channel in coordinations(filenames=True):
     candidates = set()
     for result in results:
         modes = []
+
+        tone, code = None, None
         if result["FM Analog"] == "Yes":
             modes.append("FM")
+            if result["PL"].startswith("D"):
+                code = result["PL"].lstrip("D")
+            try:
+                tone = Decimal(result["PL"])
+            except (ValueError, InvalidOperation):
+                pass
+
+        dmr_cc = None
         if result["DMR"] == "Yes":
             modes.append("DMR")
-        tone, code = None, None
-        if result["PL"].startswith("D"):
-            code = result["PL"].lstrip("D")
-        try:
-            tone = Decimal(result["PL"])
-        except (ValueError, InvalidOperation):
-            pass
-        dmr_cc = None
-        if result["DMR Color Code"]:
             dmr_cc = result["DMR Color Code"]
+
+        dstar_mode = None
+        if result["D-Star"] == "Yes":
+            modes.append("D-STAR")
+            # RepeaterBook doesn't specify, assume DV
+            dstar_mode = "DV"
+
+        c4fm_dsq = None
+        if result["System Fusion"] == "Yes":
+            modes.append("C4FM")
+            c4fm_dsq = result["YSF DG ID Uplink"]
+
+        p25_nac = None
+        if result["APCO P-25"] == "Yes":
+            modes.append("P25")
+            p25_nac = result["P-25 NAC"]
+
         candidate = Channel(
             call=result["Callsign"],
             output=result["Frequency"],
@@ -56,6 +74,9 @@ for channel in coordinations(filenames=True):
             input_tone=tone,
             input_code=code,
             dmr_cc=dmr_cc,
+            dstar_mode=dstar_mode,
+            c4fm_dsq=c4fm_dsq,
+            p25_nac=p25_nac,
             modes=modes,
         )
         distance = channel.distance(candidate.latitude, candidate.longitude)
