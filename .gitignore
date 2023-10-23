@@ -63,6 +63,6 @@ target/
 
 # WWARA database things
 *.zip
-*.csv
+/*.csv
 *.chirp
 copyright.txt
