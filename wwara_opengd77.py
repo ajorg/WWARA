@@ -288,9 +288,14 @@ def zones_csv(channels):
 
 if __name__ == "__main__":
     channels = []
+    seen = set()
     for channel in coordinations():
         if not _supported(channel):
             continue
+        if channel in seen:
+            # Avoids a nasty duplicate
+            continue
+        seen.add(channel)
         channels.append(GB3GFChannel(channel))
     _dedup_names(channels)
     # Sort channels in order of output frequency
