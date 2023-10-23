@@ -149,6 +149,8 @@ EXCEPTIONS = {
     Channel("WW7ATS", "1253.25", "434"): {"comment": "ATV"},
     # AA7MI   440.7250 +5.00 FM TOO WIDE ERROR!
     Channel("AA7MI", "440.725", "445.725"): {"comment": "KNOWN"},
+    # WA7LZO Seattle 442.9 +5 P25  (47.61 -122.33) ERROR! NO NAC
+    Channel("WA7LZO", "442.9", "447.9"): {"comment": 'KNOWN "Dynamic NAC"'},
 }
 ERRORS = {}
 

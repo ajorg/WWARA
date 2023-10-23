@@ -4,7 +4,8 @@ from wwara.database import coordinations
 
 LAT_LO = 45.90
 LAT_HI = 49.00
-LON_LO = -124.22
+# LON_LO = -124.22
+LON_LO = -124.42
 LON_HI = -121.32
 
 
