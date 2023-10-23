@@ -82,36 +82,42 @@ class Channel:
         longitude=None,
         rx_only=False,
     ):
-        self.call = call
+        self.call = call.strip() or None
         self.output = Decimal(output)
         self.input = Decimal(input)
         self.bandwidth = Decimal(bandwidth)
-        self.modes = modes
-        self.output_tone = output_tone
+        self.modes = modes or []
+        self.output_tone = None
+        if output_tone:
+            self.output_tone = Decimal(output_tone)
+        self.input_tone = None
         if input_tone:
             self.input_tone = Decimal(input_tone)
-        else:
-            self.input_tone = None
-        self.output_code = output_code
-        self.input_code = input_code
-        self.dmr_cc = dmr_cc
-        self.c4fm_dsq = c4fm_dsq
+        self.output_code = output_code or None
+        self.input_code = input_code or None
+        self.dmr_cc = dmr_cc or None
+        if "DMR" in self.modes:
+            if self.dmr_cc:
+                self.dmr_cc = Decimal(self.dmr_cc)
+            else:
+                self.dmr_cc = Decimal(0)
+        self.c4fm_dsq = c4fm_dsq or None
         if "C4FM" in self.modes:
             if self.c4fm_dsq:
                 self.c4fm_dsq = Decimal(self.c4fm_dsq)
             else:
-                self.c4fm_dsq = 00
-        self.dstar_mode = dstar_mode
-        self.p25_phase = p25_phase
-        self.p25_nac = p25_nac
-        self.location = location
+                self.c4fm_dsq = Decimal(00)
+        self.dstar_mode = dstar_mode or None
+        self.p25_phase = p25_phase or None
+        self.p25_nac = p25_nac or None
+        self.location = location or None
         self.latitude = None
         if latitude:
             self.latitude = Decimal(latitude)
         self.longitude = None
         if longitude:
             self.longitude = Decimal(longitude)
-        self.rx_only = rx_only
+        self.rx_only = rx_only or False
         self.rules = {}
         self._name = None
         self._number = 0
