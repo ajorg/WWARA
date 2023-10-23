@@ -127,13 +127,29 @@ class Channel:
         return self.input - self.output
 
     def __hash__(self):
-        return hash((self.call, self.output, self.input))
+        return hash(
+            (
+                self.call,
+                self.output,
+                self.input,
+                self.input_tone,
+                self.input_code,
+                self.dmr_cc,
+                self.c4fm_dsq,
+                self.p25_nac,
+            )
+        )
 
     def __eq__(self, other):
         return (
             self.call == other.call
             and self.output == other.output
             and self.input == other.input
+            and self.input_tone == other.input_tone
+            and self.input_code == other.input_code
+            and self.dmr_cc == other.dmr_cc
+            and self.c4fm_dsq == other.c4fm_dsq
+            and self.p25_nac == other.p25_nac
         )
 
     def __lt__(self, other):
