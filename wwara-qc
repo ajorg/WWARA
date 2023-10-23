@@ -26,29 +26,46 @@ def in_region(channel):
 
 SEEN = set()
 for channel in coordinations(filenames=True):
-    error = not match(channel)
     comments = []
+
+    # Match various rules
+
+    # Start with if it matches the band plan
+    error = not match(channel)
+
+    # Input and output reversed is not uncommon
     if match(~channel):
         error = False
         comments.append("REVERSED")
+
+    # At least one mode should be defined
     if not channel.modes:
         error = True
         comments.append("NO MODES")
+
+    # Should be within the geographical boundaries
     if not in_region(channel):
         error = True
         comments.append("OUT OF BOUNDS")
+
     if "FM" in channel.modes:
+        # Should have either a CTCSS tone or DCS code
         if not (channel.input_tone or channel.input_code):
             error = True
             comments.append("NO TONE/CODE")
+        # But shouldn't have both
         if channel.input_tone and channel.input_code:
             error = True
             comments.append("AMBIGUOUS TONE/CODE")
+
     if "DMR" in channel.modes:
+        # Should have a Color Code
         if not channel.dmr_cc:
             error = True
             comments.append("NO CC")
+
     if "C4FM" in channel.modes:
+        # Should have a DSQ / DG-ID
         if channel.c4fm_dsq is None:
             # DSQ is obsoleted by DG-ID
             comments.append("NO DSQ")
@@ -59,14 +76,20 @@ for channel in coordinations(filenames=True):
             comments.append("DG-ID OUT OF RANGE")
         if not (0 <= channel.c4fm_dsq <= 126):
             comments.append("DSQ OUT OF RANGE")
+
     if "P25" in channel.modes:
+        # Should have a NAC
         if not channel.p25_nac:
             error = True
             comments.append("NO NAC")
+
     if "NXDN" in channel.modes:
+        # Should have a RAN
         if not channel.nxdn_ran:
             error = True
             comments.append("NO RAN")
+
+    # Multimode is unusual, but not bad
     if len(channel.modes) > 1:
         comments.append("MULTIMODE")
 
@@ -77,11 +100,16 @@ for channel in coordinations(filenames=True):
         comments.append("DUPLICATE")
     SEEN.add(channel)
 
+    # Basic errors like being too wide for the channel or having the wrong offset
     if channel.errors:
         error = True
         comments.extend(channel.errors)
+
+    # But if a problem is known and accepted, not to be corrected, we won't complain
     if channel in EXCEPTIONS:
         comments.append("KNOWN")
+
+    # And now we're done evaluating
     elif error:
         comments.insert(0, "ERROR!")
     comments = " ".join(comments)
