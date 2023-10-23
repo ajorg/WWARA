@@ -12,8 +12,9 @@ from channel import Channel
 HEADERS = {
     "User-Agent": "wwara-qc/1.0 (github.com/ajorg/WWARA, andrew@jorgensenfamily.us)",
 }
+# This product uses RepeaterBook Data API but is not endorsed or certified by RepeaterBook
 API_URL = "https://www.repeaterbook.com/api/export.php?country=United%20States&state={}"
-API_URL = "http://files.jorgensenfamily.us/repeaterbook-{}.json"
+# API_URL = "http://files.jorgensenfamily.us/repeaterbook-{}.json"
 
 results = []
 for state in ("Washington", "Oregon"):
