@@ -23,7 +23,9 @@ class Contact:
     def __init__(
         self,
         id,
-        call,
+        name=None,
+        call=None,
+        type="Private",
         timeslot=None,
         first_name=None,
         last_name=None,
@@ -32,7 +34,9 @@ class Contact:
         country=None,
     ):
         self.id = Decimal(id)
+        self._name = name
         self.call = call
+        self.type = type
         self.timeslot = timeslot
         self.first_name = first_name
         self.last_name = last_name
@@ -42,7 +46,9 @@ class Contact:
 
     @property
     def name(self):
-        return f"{self.call} {self.first_name}"
+        if self._name is None:
+            self._name = f"{self.call} {self.first_name}"
+        return self._name
 
     def __str__(self):
         return f"{self.id} {self.name}"
