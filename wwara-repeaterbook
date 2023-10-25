@@ -10,7 +10,7 @@ from wwara.database import coordinations
 from channel import Channel
 
 HEADERS = {
-    "User-Agent": "wwara-qc/1.0 (github.com/ajorg/WWARA, andrew@jorgensenfamily.us)",
+    "User-Agent": "wwara-repeaterbook/1.0 (https://github.com/ajorg/WWARA/blob/main/wwara-repeaterbook, andrew@jorgensenfamily.us)",
 }
 # This product uses RepeaterBook Data API but is not endorsed or certified by RepeaterBook
 API_URL = "https://www.repeaterbook.com/api/export.php?country=United%20States&state={}"
