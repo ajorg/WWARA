@@ -18,15 +18,17 @@ class Channel:
     input_tone_k = "Input Tone"
     output_code_k = "Output Code"
     input_code_k = "Input Code"
+    p25_k = "P25"
+    p25_phase_k = "P25 Phase"
+    p25_nac_k = "P25 NAC"
+    dstar_k = "D-STAR"
+    dstar_mode_k = "D-STAR Mode"
+    nxdn_k = "NXDN"
+    nxdn_ran_k = "NXDN RAN"
     dmr_k = "DMR"
     dmr_cc_k = "DMR CC"
     c4fm_k = "C4FM"
     c4fm_dsq_k = "C4FM DSQ"
-    dstar_k = "D-STAR"
-    dstar_mode_k = "D-STAR Mode"
-    p25_k = "P25"
-    p25_phase_k = "P25 Phase"
-    p25_nac_k = "P25 NAC"
     location_k = "Location"
     latitude_k = "Latitude"
     longitude_k = "Longitude"
@@ -44,15 +46,17 @@ class Channel:
         input_tone_k,
         output_code_k,
         input_code_k,
+        p25_k,
+        p25_phase_k,
+        p25_nac_k,
+        dstar_k,
+        dstar_mode_k,
+        nxdn_k,
+        nxdn_ran_k,
         dmr_k,
         dmr_cc_k,
         c4fm_k,
         c4fm_dsq_k,
-        dstar_k,
-        dstar_mode_k,
-        p25_k,
-        p25_phase_k,
-        p25_nac_k,
         location_k,
         latitude_k,
         longitude_k,
@@ -72,17 +76,20 @@ class Channel:
         input_tone=None,
         output_code=None,
         input_code=None,
-        dmr_cc=None,
-        c4fm_dsq=None,
-        dstar_mode=None,
         p25_phase=None,
         p25_nac=None,
+        dstar_mode=None,
+        nxdn_ran=None,
+        dmr_cc=None,
+        c4fm_dsq=None,
         location=None,
         latitude=None,
         longitude=None,
         rx_only=False,
     ):
-        self.call = call.strip() or None
+        self.call = None
+        if call:
+            self.call = call.strip()
         self.output = Decimal(output)
         self.input = Decimal(input)
         self.bandwidth = Decimal(bandwidth)
@@ -95,6 +102,10 @@ class Channel:
             self.input_tone = Decimal(input_tone)
         self.output_code = output_code or None
         self.input_code = input_code or None
+        self.p25_phase = p25_phase or None
+        self.p25_nac = p25_nac or None
+        self.dstar_mode = dstar_mode or None
+        self.nxdn_ran = nxdn_ran or None
         self.dmr_cc = dmr_cc or None
         if "DMR" in self.modes:
             if self.dmr_cc:
@@ -107,9 +118,6 @@ class Channel:
                 self.c4fm_dsq = Decimal(self.c4fm_dsq)
             else:
                 self.c4fm_dsq = Decimal(00)
-        self.dstar_mode = dstar_mode or None
-        self.p25_phase = p25_phase or None
-        self.p25_nac = p25_nac or None
         self.location = location or None
         self.latitude = None
         if latitude:
@@ -134,9 +142,10 @@ class Channel:
                 self.input,
                 self.input_tone,
                 self.input_code,
+                self.p25_nac,
+                self.nxdn_ran,
                 self.dmr_cc,
                 self.c4fm_dsq,
-                self.p25_nac,
             )
         )
 
@@ -147,9 +156,10 @@ class Channel:
             and self.input == other.input
             and self.input_tone == other.input_tone
             and self.input_code == other.input_code
+            and self.p25_nac == other.p25_nac
+            and self.nxdn_ran == other.nxdn_ran
             and self.dmr_cc == other.dmr_cc
             and self.c4fm_dsq == other.c4fm_dsq
-            and self.p25_nac == other.p25_nac
         )
 
     def __lt__(self, other):
@@ -176,24 +186,28 @@ class Channel:
         return "FM" in self.modes
 
     @property
-    def dmr(self):
-        return "DMR" in self.modes
-
-    @property
-    def c4fm(self):
-        return "C4FM" in self.modes
-
-    @property
-    def dstar(self):
-        return "D-STAR" in self.modes
+    def atv(self):
+        return "ATV" in self.modes
 
     @property
     def p25(self):
         return "P25" in self.modes
 
     @property
-    def atv(self):
-        return "ATV" in self.modes
+    def dstar(self):
+        return "D-STAR" in self.modes
+
+    @property
+    def nxdn(self):
+        return "NXDN" in self.modes
+
+    @property
+    def dmr(self):
+        return "DMR" in self.modes
+
+    @property
+    def c4fm(self):
+        return "C4FM" in self.modes
 
     @property
     def number(self):
@@ -216,18 +230,18 @@ class Channel:
                 modes.append(f"{mode} {self.input_tone:.1f}")
             else:
                 modes.append(mode)
-        if "DMR" in self.modes:
-            modes.append(f"DMR CC{self.dmr_cc}")
-        if "D-STAR" in self.modes:
-            modes.append(f"D-STAR {self.dstar_mode}")
-        if "C4FM" in self.modes:
-            modes.append(f"C4FM {self.c4fm_dsq}")
-        if "P25" in self.modes:
-            modes.append(f"P25 {self.p25_nac}")
-        if "NDXN" in self.modes:
-            modes.append(f"NXDN {self.nxdn_ran}")
         if "ATV" in self.modes:
             modes.append("ATV")
+        if "P25" in self.modes:
+            modes.append(f"P25 {self.p25_nac}")
+        if "D-STAR" in self.modes:
+            modes.append(f"D-STAR {self.dstar_mode}")
+        if "NDXN" in self.modes:
+            modes.append(f"NXDN {self.nxdn_ran}")
+        if "DMR" in self.modes:
+            modes.append(f"DMR CC{self.dmr_cc}")
+        if "C4FM" in self.modes:
+            modes.append(f"C4FM {self.c4fm_dsq}")
         return " & ".join(modes) or "NONE"
 
     @property
@@ -289,16 +303,18 @@ class Channel:
         yield self.input_tone_k, self.input_tone
         yield self.output_code_k, self.output_code
         yield self.input_code_k, self.input_code
+        yield self.atv_k, self.atv
+        yield self.p25_k, self.p25
+        yield self.p25_phase_k, self.p25_phase
+        yield self.p25_nac_k, self.p25_nac
+        yield self.dstar_k, self.dstar
+        yield self.dstar_mode_k, self.dstar_mode
+        yield self.nxdn_k, self.nxdn
+        yield self.nxdn_ran_k, self.nxdn_ran
         yield self.dmr_k, self.dmr
         yield self.dmr_cc_k, self.dmr_cc
         yield self.c4fm_k, self.c4fm
         yield self.c4fm_dsq_k, self.c4fm_dsq
-        yield self.dstar_k, self.dstar
-        yield self.dstar_mode_k, self.dstar_mode
-        yield self.p25_k, self.p25
-        yield self.p25_phase_k, self.p25_phase
-        yield self.p25_nac_k, self.p25_nac
-        yield self.atv_k, self.atv
         yield self.location_k, self.location
         yield self.latitude_k, self.latitude
         yield self.longitude_k, self.longitude
