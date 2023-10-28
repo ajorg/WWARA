@@ -64,7 +64,7 @@ for channel in coordinations(filenames=True):
 
     if "DMR" in channel.modes:
         # Should have a Color Code
-        if not channel.dmr_cc:
+        if channel.dmr_cc is None:
             error = True
             comments.append("NO CC")
     else:
@@ -91,7 +91,7 @@ for channel in coordinations(filenames=True):
 
     if "P25" in channel.modes:
         # Should have a NAC
-        if not channel.p25_nac:
+        if channel.p25_nac is None:
             error = True
             comments.append("NO NAC")
     else:
@@ -101,7 +101,7 @@ for channel in coordinations(filenames=True):
 
     if "NXDN" in channel.modes:
         # Should have a RAN
-        if not channel.nxdn_ran:
+        if channel.nxdn_ran is None:
             error = True
             comments.append("NO RAN")
     else:
