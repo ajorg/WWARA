@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import print_function
+
 from csv import DictReader
 from decimal import Decimal
 from sys import argv
@@ -17,9 +19,9 @@ c = open(argv[1], "r")
 c.readline()
 d = DictReader(c)
 
-print '<?xml version="1.0"?>'
-print "<radio>"
-print "<memories>"
+print('<?xml version="1.0"?>')
+print("<radio>")
+print("<memories>")
 
 i = 0
 for row in d:
@@ -57,33 +59,33 @@ for row in d:
     ):
         # These are not Analog modes
         continue
-    print '<memory location="%s">' % i
-    print "<shortName>%s</shortName>" % name
-    print "<longName>%s</longName>" % longname
-    print '<frequency units="MHz">%s</frequency>' % drop_decimals(out_freq)
-    print '<squelch id="rtone" type="repeater">'
-    print "<tone>%s</tone>" % (row["CTCSS_IN"] or "88.5")
-    print "</squelch>"
-    print '<squelch id="ctone" type="ctcss">'
-    print "<tone>%s</tone>" % (row["CTCSS_OUT"] or "88.5")
-    print "</squelch>"
-    print '<squelch id="dtcs" type="dtcs">'
-    print "<code>%s</code>" % (row["DCS_CDCSS"] or "023")
-    print "<polarity>%s</polarity>" % "NN"
-    print "</squelch>"
+    print('<memory location="%s">' % i)
+    print("<shortName>%s</shortName>" % name)
+    print("<longName>%s</longName>" % longname)
+    print('<frequency units="MHz">%s</frequency>' % drop_decimals(out_freq))
+    print('<squelch id="rtone" type="repeater">')
+    print("<tone>%s</tone>" % (row["CTCSS_IN"] or "88.5"))
+    print("</squelch>")
+    print('<squelch id="ctone" type="ctcss">')
+    print("<tone>%s</tone>" % (row["CTCSS_OUT"] or "88.5"))
+    print("</squelch>")
+    print('<squelch id="dtcs" type="dtcs">')
+    print("<code>%s</code>" % (row["DCS_CDCSS"] or "023"))
+    print("<polarity>%s</polarity>" % "NN")
+    print("</squelch>")
     if row["CTCSS_IN"]:
-        print "<squelchSetting>%s</squelchSetting>" % "rtone"
+        print("<squelchSetting>%s</squelchSetting>" % "rtone")
     elif row["DCS_CDCSS"]:
-        print "<squelchSetting>%s</squelchSetting>" % "dtcs"
-    print "<duplex>%s</duplex>" % duplex
-    print '<offset units="MHz">%s</offset>' % drop_decimals(offset)
-    print "<mode>%s</mode>" % mode
-    print '<tuningStep units="kHz">%s</tuningStep>' % "5.0"
-    print "</memory>"
+        print("<squelchSetting>%s</squelchSetting>" % "dtcs")
+    print("<duplex>%s</duplex>" % duplex)
+    print('<offset units="MHz">%s</offset>' % drop_decimals(offset))
+    print("<mode>%s</mode>" % mode)
+    print('<tuningStep units="kHz">%s</tuningStep>' % "5.0")
+    print("</memory>")
     i += 1
 
 c.close()
 
-print "</memories>"
-print "<banks/>"
-print "</radio>"
+print("</memories>")
+print("<banks/>")
+print("</radio>")
