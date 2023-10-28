@@ -185,8 +185,9 @@ def convert(zipfile):
 
 def lambda_handler(event=None, context=None):
     """Handler for use in AWS Lambda."""
-    import boto3
     from os import environ
+
+    import boto3
 
     try:
         from urllib.parse import urlparse

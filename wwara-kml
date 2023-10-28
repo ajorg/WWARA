@@ -1,8 +1,9 @@
 #!/usr/bin/env python
+import xml.etree.ElementTree as ET
 from csv import DictWriter
 from decimal import Decimal
 from sys import stderr
-import xml.etree.ElementTree as ET
+
 from wwara.database import coordinations
 
 LAYERS = {

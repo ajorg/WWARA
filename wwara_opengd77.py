@@ -4,7 +4,7 @@ import logging
 import re
 from csv import DictWriter
 from decimal import Decimal
-from sys import stdout, stderr
+from sys import stderr, stdout
 
 from channel import Channel
 from wwara.database import coordinations

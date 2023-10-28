@@ -1,6 +1,6 @@
 from copy import copy
-from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
+from math import atan2, cos, radians, sin, sqrt
 
 FORMAT = "{call:6} {output:9.4f} {offset:+.2f} {modes} {comment}"
 R = 6373.0

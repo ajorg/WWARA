@@ -1,11 +1,9 @@
+import urllib.request
 from decimal import Decimal
-from urllib.request import urlopen
 from html.parser import HTMLParser
+from urllib.request import urlopen
 
 from contacts.radioid import contacts
-
-import urllib.request
-from html.parser import HTMLParser
 
 RADIOID_CONTACTS = {}
 for contact in contacts():

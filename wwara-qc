@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from wwara.plan import REPEATERS, EXCEPTIONS, ERRORS
 from wwara.database import coordinations
+from wwara.plan import ERRORS, EXCEPTIONS, REPEATERS
 
 LAT_LO = 45.90
 LAT_HI = 49.00

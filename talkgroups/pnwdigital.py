@@ -1,10 +1,11 @@
 import codecs
 from csv import DictReader
-from os import path
-from os.path import dirname, abspath, join
-from io import StringIO
 from datetime import date
+from io import StringIO
+from os import path
+from os.path import abspath, dirname, join
 from urllib.request import urlopen
+
 from contact import Contact
 
 CSVFILE_PATH = join(dirname(abspath(__file__)), "pnwdigital.csv")

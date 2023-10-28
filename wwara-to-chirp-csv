@@ -1,11 +1,11 @@
 #!/usr/bin/env python2
-from StringIO import StringIO
-from csv import DictReader, DictWriter, QUOTE_ALL
+from csv import QUOTE_ALL, DictReader, DictWriter
 from decimal import Decimal
 from sys import stdout
 from zipfile import ZipFile
 
 import requests
+from StringIO import StringIO
 
 fieldnames = (
     "Location",

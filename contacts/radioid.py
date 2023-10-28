@@ -1,5 +1,6 @@
 from json import load
 from urllib.request import urlopen
+
 from contact import Contact
 
 

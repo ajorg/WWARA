@@ -2,8 +2,8 @@
 from decimal import Decimal
 
 from channel import Channel
-from wwara.plan import REPEATERS
 from wwara.database import coordinations
+from wwara.plan import REPEATERS
 
 
 def match(channel):

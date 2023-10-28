@@ -2,6 +2,7 @@
 from csv import DictWriter
 from decimal import Decimal
 from sys import stderr
+
 from wwara.database import coordinations
 
 FIELDNAMES = (

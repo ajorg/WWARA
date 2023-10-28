@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from decimal import Decimal, InvalidOperation
-from json import loads, dumps
+from json import dumps, loads
 from json.decoder import JSONDecodeError
 from sys import exit, stderr
 from time import sleep
 from urllib.request import Request, urlopen
 
-from wwara.database import coordinations
 from channel import Channel
+from wwara.database import coordinations
 
 HEADERS = {
     "User-Agent": "wwara-repeaterbook/1.0 (https://github.com/ajorg/WWARA/blob/main/wwara-repeaterbook, andrew@jorgensenfamily.us)",
