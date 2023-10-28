@@ -20,14 +20,19 @@ class Channel:
     input_code_k = "Input Code"
     p25_k = "P25"
     p25_phase_k = "P25 Phase"
+    # TODO: P25 NAC is hexadecimal, default 0x293, from 0x000 to 0xfff
     p25_nac_k = "P25 NAC"
     dstar_k = "D-STAR"
     dstar_mode_k = "D-STAR Mode"
     nxdn_k = "NXDN"
+    # TODO: AFAICT NXDN RANs are decimal, from 1-63 (0 probably means open or all)
     nxdn_ran_k = "NXDN RAN"
     dmr_k = "DMR"
+    # TODO: Colour Codes are decimal, 0-15
     dmr_cc_k = "DMR CC"
     c4fm_k = "C4FM"
+    # TODO: C4FM DSQ, decimal 001-126 (3 digits), is obsoleted by DG-ID 00-99 (2 digits)
+    # Note: DG-ID is backward compatible, and 00 means "open"
     c4fm_dsq_k = "C4FM DSQ"
     location_k = "Location"
     latitude_k = "Latitude"
