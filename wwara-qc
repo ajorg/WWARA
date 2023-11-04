@@ -25,7 +25,7 @@ def in_region(channel):
 
 
 SEEN = set()
-for channel in coordinations(filenames=True):
+for channel in coordinations(filenames=False):
     comments = []
 
     # Match various rules
