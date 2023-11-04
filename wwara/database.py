@@ -9,6 +9,8 @@ from zipfile import ZipFile
 
 from channel import Channel
 
+EXTRACT_URL = "https://www.wwara.org/DataBaseExtract.zip"
+
 
 def _bandwidth(row):
     bandwidth = "25"
@@ -48,10 +50,12 @@ def _modes(row):
     return modes
 
 
-def coordinations(filenames=False):
-    with urlopen("https://www.wwara.org/DataBaseExtract.zip") as response:
-        # ZipFile requires a file-like object that supports seek
-        zipfile = ZipFile(BytesIO(response.read()))
+def coordinations(extract_url=EXTRACT_URL, filenames=False, file_obj=None):
+    if file_obj is None:
+        file_obj = urlopen(extract_url)
+    # ZipFile requires a file-like object that supports seek
+    zipfile = ZipFile(BytesIO(file_obj.read()))
+    file_obj.close()
 
     for name in zipfile.namelist():
         if not name.endswith(".csv"):
