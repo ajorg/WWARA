@@ -5,6 +5,8 @@ from urllib.parse import urlparse
 import boto3
 
 from wwara.database import coordinations
+from wwara.plan import EXCEPTIONS
+from wwara.qa import test
 
 S3 = boto3.client("s3")
 SNS = boto3.client("sns")
@@ -40,13 +42,23 @@ def lambda_handler(event=None, context=None):
     previous = set(coordinations(file_obj=previous_object["Body"]))
 
     changed = False
-    for subject, entries in (
+    for subject, channels in (
         ("WWARA Removed", previous - latest),
         ("WWARA Added", latest - previous),
     ):
-        if entries:
+        if channels:
             changed = True
-            message = "\n".join([str(e) for e in entries])
+            messages = []
+            for channel in sorted(channels):
+                error, comments = test(channel)
+                if error and channel not in EXCEPTIONS:
+                    comments.insert(0, "ERROR!")
+                if comments:
+                    comments = " ".join(comments)
+                    messages.append(f"{channel} {comments}")
+                else:
+                    messages.append(str(channel))
+            message = "\n".join(messages)
             print(json.dumps({"Subject": subject, "Message": message}))
             if TOPIC_ARN:
                 SNS.publish(
