@@ -154,6 +154,28 @@ EXCEPTIONS = {
 }
 ERRORS = {}
 
+LAT_LO = 45.90
+LAT_HI = 49.00
+# LON_LO = -124.22
+LON_LO = -124.42
+LON_HI = -121.32
+
+
+def in_region(channel):
+    if not (LAT_LO < channel.latitude < LAT_HI):
+        return False
+    if not (LON_LO < channel.longitude < LON_HI):
+        return False
+    return True
+
+
+def match(channel):
+    for rule in REPEATERS:
+        if channel in rule:
+            return True
+    return False
+
+
 if __name__ == "__main__":
     from rule import HEADER
 
