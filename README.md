@@ -21,3 +21,11 @@ and send a notification through SNS.
 ```
 zip -9 delta.zip wwara/delta.py wwara/database.py wwara/plan.py wwara/qa.py channel.py rule.py
 ```
+
+# Future
+- [ ] Use rough topographical data to predict reachability better than by distance
+- [ ] Make WWARA just one datasource among many
+- [ ] Provide CHIRP CSV script to WWARA
+- [ ] Document other tools / scripts a bit
+- [ ] Update everything to use the new Channel class
+- [ ] Migrate to GitLab 😉
