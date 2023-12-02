@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import codecs
 from csv import DictReader
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from io import BytesIO
 from sys import stderr
 from urllib.request import urlopen
@@ -84,6 +84,10 @@ def coordinations(extract_url=EXTRACT_URL, filenames=False, file_obj=None):
                     p25_phase = 2
                 if row["P25_PHASE_1"] == "Y":
                     p25_phase = 1
+                try:
+                    Decimal(row["FUSION_DSQ"])
+                except InvalidOperation:
+                    row["FUSION_DSQ"] = ""
                 yield Channel(
                     call=row["CALL"],
                     output=Decimal(row["OUTPUT_FREQ"]),
