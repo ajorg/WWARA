@@ -74,7 +74,8 @@ class Channel:
         self,
         call,
         output,
-        input,
+        input=None,
+        offset=None,
         bandwidth="25",
         modes=("FM",),
         output_tone=None,
@@ -96,7 +97,12 @@ class Channel:
         if call:
             self.call = call.strip()
         self.output = Decimal(output)
-        self.input = Decimal(input)
+        if input:
+            self.input = Decimal(input)
+        elif offset:
+            self.input = self.output + Decimal(offset)
+        else:
+            self.input = self.output
         self.bandwidth = Decimal(bandwidth)
         self.modes = modes or []
         self.output_tone = None
