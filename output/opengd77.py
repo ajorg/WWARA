@@ -275,12 +275,12 @@ def _zones(channels):
         for channel in channels:
             if i > 80:
                 break
-            i += 1
             if (spec["mode"] is not None) and (spec["mode"] not in channel.modes):
                 continue
             if not (spec["low"] <= channel.input <= spec["high"]):
                 continue
             channel_names.append(channel.name)
+            i += 1
         yield name, channel_names
 
 
