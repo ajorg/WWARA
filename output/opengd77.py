@@ -1,15 +1,14 @@
-#!/usr/bin/env python
-"""Converts a WWARA database dump to GB3GF CSV format for GD-77."""
-import logging
+"""Converts channels to OpenGD77 CSV format"""
+
 import re
 from csv import DictWriter
 from decimal import Decimal
-from sys import stderr, stdout
+from json import load
+from sys import argv, stderr, stdout
 
 from channel import Channel
+from channels import chirp
 from wwara.database import coordinations
-
-LOG = logging.getLogger(__name__)
 
 LAT = Decimal(47.80)
 LON = Decimal(-122.25)
@@ -19,7 +18,7 @@ NAME_LENGTH = 16
 DELIMITER = ","
 
 
-class GB3GFChannel(Channel):
+class OpenGD77Channel(Channel):
     number_k = "Channel Number"
     name_k = "Channel Name"
     channel_type_k = "Channel Type"
@@ -95,7 +94,7 @@ class GB3GFChannel(Channel):
             longitude=channel.longitude,
             rx_only=channel.rx_only,
         )
-        self._name = None
+        self._name = channel.name
         self._number = 0
 
     @property
@@ -246,9 +245,13 @@ def _dedup_names(
 
 
 def channels_csv(channels):
+    number = 0
+    for channel in channels:
+        number += 1
+        channel.number = number
     with open("Channels.csv", "w", newline="") as _channels_csv:
         writer = DictWriter(
-            _channels_csv, fieldnames=GB3GFChannel.fieldnames, delimiter=DELIMITER
+            _channels_csv, fieldnames=OpenGD77Channel.fieldnames, delimiter=DELIMITER
         )
         writer.writeheader()
         writer.writerows(channels)
@@ -257,7 +260,7 @@ def channels_csv(channels):
 ZONES_FIELDNAMES = tuple(["Zone Name"] + ["Channel " + str(i) for i in range(1, 81)])
 
 
-def zones_csv(channels):
+def _zones(channels):
     zones = {
         "WWARA": {"mode": None, "low": 144, "high": 450},
         "WWARA FM": {"mode": "FM", "low": 144, "high": 450},
@@ -266,39 +269,94 @@ def zones_csv(channels):
         "WWARA 220": {"mode": "FM", "low": 222, "high": 225},
         "WWARA UHF": {"mode": "FM", "low": 420, "high": 450},
     }
+    for name, spec in zones.items():
+        i = 1
+        channel_names = []
+        for channel in channels:
+            if i > 80:
+                break
+            i += 1
+            if (spec["mode"] is not None) and (spec["mode"] not in channel.modes):
+                continue
+            if not (spec["low"] <= channel.input <= spec["high"]):
+                continue
+            channel_names.append(channel.name)
+        yield name, channel_names
+
+
+if __name__ == "__main__":
+    channels = []
+    with open(argv[1]) as zones_f:
+        zones = load(zones_f)
+    zone_rows = []
+    for zone_name, zone in zones.items():
+        i = 1
+        print(f"{zone_name}:")
+        zone_row = {"Zone Name": zone_name}
+        if zone is None:
+            continue
+        elif isinstance(zone, (str, bytes)):
+            if zone.startswith(":"):
+                _, source, _zone = zone.split(":", 2)
+                if source == "chirp":
+                    for channel in chirp.zone(_zone):
+                        print(channel)
+                        channels.append(OpenGD77Channel(channel))
+                        zone_row[f"Channel {i}"] = channel.name
+                        i += 1
+            zone_rows.append(zone_row)
+            continue
+        for item_name, item in zone.items():
+            zone_row[f"Channel {i}"] = item_name
+            i += 1
+            if item is None:
+                print(item_name)
+                continue
+            try:
+                if "input" not in item:
+                    item["input"] = item["output"]
+                if "offset" in item:
+                    item["input"] = Decimal(item["output"]) + Decimal(
+                        item["offset"]
+                    )
+                    del item["offset"]
+                channel = Channel(call=None, **item)
+                channel.name = item_name
+                channels.append(OpenGD77Channel(channel))
+                print(channel)
+            except Exception as e:
+                print(e)
+                print(item)
+        zone_rows.append(zone_row)
+    if "<WWARA" in zones:
+        seen = set()
+        wwara_channels = []
+        for channel in coordinations():
+            if not _supported(channel):
+                continue
+            if channel in seen:
+                # Avoids a nasty duplicate
+                continue
+            seen.add(channel)
+            wwara_channels.append(OpenGD77Channel(channel))
+        _dedup_names(wwara_channels)
+        # Sort channels in order of output frequency
+        channels.extend(
+            (sorted(wwara_channels, key=lambda channel: channel.output))
+        )
+        for _zone_name, channel_names in _zones(
+            sorted(wwara_channels, key=lambda channel: channel.distance(LAT, LON))
+        ):
+            i = 1
+            zone_row = {"Zone Name": _zone_name}
+            for channel_name in channel_names:
+                zone_row[f"Channel {i}"] = channel_name
+                i += 1
+            zone_rows.append(zone_row)
+    channels_csv(channels)
     with open("Zones.csv", "w", newline="") as _zones_csv:
         writer = DictWriter(
             _zones_csv, fieldnames=ZONES_FIELDNAMES, delimiter=DELIMITER
         )
         writer.writeheader()
-        for name, spec in zones.items():
-            zone = {"Zone Name": name}
-            i = 1
-            for channel in channels:
-                if i > 80:
-                    break
-                if (spec["mode"] is not None) and (spec["mode"] not in channel.modes):
-                    continue
-                if not (spec["low"] <= channel.input <= spec["high"]):
-                    continue
-                zone[f"Channel {i}"] = channel.name
-                i += 1
-            writer.writerow(zone)
-
-
-if __name__ == "__main__":
-    channels = []
-    seen = set()
-    for channel in coordinations():
-        if not _supported(channel):
-            continue
-        if channel in seen:
-            # Avoids a nasty duplicate
-            continue
-        seen.add(channel)
-        channels.append(GB3GFChannel(channel))
-    _dedup_names(channels)
-    # Sort channels in order of output frequency
-    channels_csv(sorted(channels, key=lambda channel: channel.output))
-    # Sort channels in zones in order of distance (closest first)
-    zones_csv(sorted(channels, key=lambda channel: channel.distance(LAT, LON)))
+        writer.writerows(zone_rows)
