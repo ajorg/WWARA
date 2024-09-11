@@ -1,0 +1,114 @@
+{
+  "Favorites": {
+    "WA7DEM Mountlake": null,
+    "K6RFK WoodinvilV": null,
+    "WW7PSR Seattle V": null,
+    "K7LWH Kirkland V": null,
+    "W7ACS Seattle455": null,
+    "WW7STR Tiger Mtn": null,
+    "K7LED Tiger MtnV": null,
+    "openSPOT2": {
+      "output": "439.425",
+      "modes": ["DMR"],
+      "dmr_cc": "1"
+    },
+    "2m Call": null,
+    "220 Call": null,
+    "70cm Call": null,
+    "FRS 7/4": {
+      "output": "462.7125",
+      "modes": ["FM"],
+      "bandwidth": "12.5",
+      "output_tone": "77.0",
+      "input_tone": "77.0"
+    },
+    "APRS VHF": {
+      "output": "144.39",
+      "modes": ["FM"]
+    }
+  },
+  "FRS": ":chirp:FRS",
+  "GMRS": ":chirp:GMRS",
+  "GMRS Repeaters": ":chirp:GMRS Repeaters",
+  "GMRS Seattle": {
+    "GMRS1 West Seattle": {
+      "output": "462.55",
+      "modes": ["FM"],
+      "offset": "5",
+      "input_tone": "103.5"
+    },
+    "GMRS2 Beacon Hill": {
+      "modes": ["FM"],
+      "output": "462.575",
+      "offset": "5",
+      "input_tone": "103.5"
+    },
+    "GMRS3 Capitol Hill": {
+      "modes": ["FM"],
+      "output": "462.6",
+      "offset": "5",
+      "input_tone": "141.3"
+    },
+    "GMRS4 Magnolia": {
+      "modes": ["FM"],
+      "output": "462.625",
+      "offset": "5",
+      "input_tone": "100"
+    },
+    "GMRS6 Maple Leaf": {
+      "modes": ["FM"],
+      "output": "462.675",
+      "offset": "5",
+      "input_tone": "141.3"
+    },
+    "GMRS8 ?Seattle": {
+      "modes": ["FM"],
+      "output": "462.725",
+      "offset": "5",
+      "input_tone": "103.5"
+    },
+    "GMRS Shoreline": {
+      "modes": ["FM"],
+      "output": "462.600",
+      "offset": "5",
+      "input_tone": "162.2"
+    },
+    "GMRS SeaTac RA": {
+      "modes": ["FM"],
+      "output": "462.625",
+      "offset": "5",
+      "input_tone": "141.3"
+    }
+  },
+  "MURS": ":chirp:MURS",
+  "NOAA WX": ":chirp:NOAA WX",
+  "Simplex": {
+    "SnoCo ARES VHF": {
+      "modes": ["FM"],
+      "output": "144.46",
+      "output_tone": "123.0",
+      "input_tone": "123.0"
+    },
+    "SnoCo ARES UHF": {
+      "modes": ["FM"],
+      "output": "438.5",
+      "output_tone": "103.5",
+      "input_tone": "103.5"
+    },
+    "EDWAY Net SX": {
+      "modes": ["FM"],
+      "output": "146.58",
+      "input_tone": "103.5"
+    },
+    "NW WA ERC SX": {
+      "modes": ["FM"],
+      "output": "147.34",
+      "input_tone": "100.0"
+    },
+    "Sno-King Reg SX": {
+      "modes": ["FM"],
+      "output": "146.56"
+    }
+  },
+  "<WWARA": null
+}
