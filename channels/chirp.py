@@ -38,11 +38,13 @@ def stock_config(name):
     with urlopen(STOCK_CONFIG_URLS[name]) as response:
         for row in DictReader(codecs.getreader("us-ascii")(response)):
             output = Decimal(row["Frequency"])
-            offset = Decimal((row["Duplex"] or "") + row["Offset"])
+            offset = None
+            if row["Duplex"] in ("+", "-"):
+                offset = Decimal((row["Duplex"] or "") + row["Offset"])
             channel = Channel(
                 call=None,
                 output=output,
-                input=output + offset,
+                offset=offset,
                 bandwidth=_bandwidth(row),
                 modes=_modes(row),
             )
