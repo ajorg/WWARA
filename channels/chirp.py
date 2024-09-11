@@ -58,6 +58,24 @@ def stock_configs():
             yield channel
 
 
+def zone(name):
+    if name == "FRS":
+        for channel in stock_config("FRS / GMRS"):
+            if name in channel.name:
+                yield channel
+    elif name == "GMRS":
+        for channel in stock_config("FRS / GMRS"):
+            if "GMRS" in channel.name and channel.offset == Decimal(0):
+                yield channel
+    elif name == "GMRS Repeaters":
+        for channel in stock_config("FRS / GMRS"):
+            if "GMRS" in channel.name and channel.offset != Decimal(0):
+                yield channel
+    else:
+        for channel in stock_config(name):
+            yield channel
+
+
 if __name__ == "__main__":
     for channel in stock_configs():
         print(channel)
