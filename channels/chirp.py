@@ -9,13 +9,14 @@ from zipfile import ZipFile
 
 from channel import Channel
 
+BASE_URL = "https://raw.githubusercontent.com/kk7ds/chirp/master/chirp/stock_configs/"
 STOCK_CONFIG_URLS = {
-    "FRS / GMRS": "https://raw.githubusercontent.com/kk7ds/chirp/master/chirp/stock_configs/US%20FRS%20and%20GMRS%20Channels.csv",
-    "MURS": "https://raw.githubusercontent.com/kk7ds/chirp/master/chirp/stock_configs/US%20MURS%20Channels.csv",
-    "Calling": "https://raw.githubusercontent.com/kk7ds/chirp/master/chirp/stock_configs/US%20Calling%20Frequencies.csv",
-    "NOAA WX": "https://raw.githubusercontent.com/kk7ds/chirp/master/chirp/stock_configs/US%20NOAA%20Weather%20Alert.csv",
-    "Marine": "https://raw.githubusercontent.com/kk7ds/chirp/master/chirp/stock_configs/US%20Marine%20VHF%20Channels.csv",
-    "Railroad": "https://raw.githubusercontent.com/kk7ds/chirp/master/chirp/stock_configs/US%20CA%20Railroad%20Channels.csv",
+    "FRS / GMRS": BASE_URL + "US%20FRS%20and%20GMRS%20Channels.csv",
+    "MURS": BASE_URL + "US%20MURS%20Channels.csv",
+    "Calling": BASE_URL + "US%20Calling%20Frequencies.csv",
+    "NOAA WX": BASE_URL + "US%20NOAA%20Weather%20Alert.csv",
+    "Marine": BASE_URL + "US%20Marine%20VHF%20Channels.csv",
+    "Railroad": BASE_URL + "US%20CA%20Railroad%20Channels.csv",
 }
 
 
