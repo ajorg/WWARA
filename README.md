@@ -20,6 +20,7 @@ and send a notification through SNS.
 
 ```
 zip -9 delta.zip wwara/delta.py wwara/database.py wwara/plan.py wwara/qa.py channel.py rule.py
+aws lambda update-function-code --function-name "$FUNCTION_NAME" --zip-file fileb://delta.zip
 ```
 
 # Future
