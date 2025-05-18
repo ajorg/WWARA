@@ -103,6 +103,7 @@ def coordinations(extract_url=EXTRACT_URL, filenames=False, file_obj=None):
                     c4fm_dsq=row.get("FUSION_DSQ", "00"),
                     p25_phase=p25_phase,
                     p25_nac=row["P25_NAC"],
+                    nxdn_ran=row["NXDN_RAN"],
                     location=row["CITY"],
                     latitude=row["LATITUDE"],
                     longitude=row["LONGITUDE"],
