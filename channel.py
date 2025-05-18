@@ -117,6 +117,11 @@ class Channel:
         self.p25_nac = p25_nac or None
         self.dstar_mode = dstar_mode or None
         self.nxdn_ran = nxdn_ran or None
+        if "NXDN" in self.modes:
+            if self.nxdn_ran:
+                self.nxdn_ran = Decimal(self.nxdn_ran)
+            else:
+                self.nxdn_ran = Decimal(0)
         self.dmr_cc = dmr_cc or None
         if "DMR" in self.modes:
             if self.dmr_cc:
@@ -247,7 +252,7 @@ class Channel:
             modes.append(f"P25 {self.p25_nac}")
         if "D-STAR" in self.modes:
             modes.append(f"D-STAR {self.dstar_mode}")
-        if "NDXN" in self.modes:
+        if "NXDN" in self.modes:
             modes.append(f"NXDN {self.nxdn_ran}")
         if "DMR" in self.modes:
             modes.append(f"DMR CC{self.dmr_cc}")
