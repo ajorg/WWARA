@@ -22,65 +22,36 @@ REPEATERS = [
     # (ajorg) TODO
     # * 52.19/52.99 Shared Non-Protected (SNP) repeater pair
     Rule("52.81", "53.99", "-1.7", "20"),
-    # 2-Meter Band
-    # 145.1000 - 145.2000 FM Repeater/Linear Translator outputs
-    # 144.5000 - 144.6000 FM Repeater/Linear Translator inputs
-    # * Washington, the adjoining States and BC use 20 kHz spacing
-    #   between repeater channels
-    # * Repeater channels are on odd frequencies below 146 MHz
-    #   and even frequencies above 146 MHz
-    # (ajorg) TODO
-    # * 144.53/145.13 and 144.69/145.29 Shared Non-Protected
-    #   (SNP) repeater pair
-    # (ajorg) Based on coordinated pairs, center frequencies are
-    #         145.1100 - 145.1900 FM Repeater/Linear Translator outputs
-    #         144.5100 - 144.5900 FM Repeater/Linear Translator inputs
+
+    # WWARA 2m Band Usage
+    # https://www.wwara.org/wp-content/uploads/2024/02/WWARA-2m-Band-Plan-20240225Publish-1.pdf
+    # * Adjoining areas use 20 kHz spacing between repeater channels
+    # 145.1000 - 145.2000 FM Repeater/Linear Translator Outputs
+    # 144.5000 - 144.6000 FM Repeater/Linear Translator Inputs
+    # TODO: 145.1250/144.2750 is a Shared Non-Protected Repeater Pair
     Rule("145.11", "145.19", "-0.6", "20"),
-    # 2-Meter Band
-    # 145.2000 - 145.4900 FM Repeater outputs
-    # (ajorg) 145.2100 - ?
-    # 144.6000 - 144.9000 FM Repeater inputs
-    # (ajorg)  - 144.8900 ?
+    Rule("145.1", "145.1875", "-0.6", "12.5", "12.5"),
+    # 145.2000 - 145.4900 FM Repeater Outputs
+    # 144.6000 - 144.9000 FM Repeater Inputs
+    # TODO: 145.2875/144.7125 is a Shared Non-Protected (SNP) Repeater Pair
     Rule("145.21", "145.49", "-0.6", "20"),
-    # 2-Meter Band
-    # (proposed) 145.1000 - 145.4875 NFM Repeater outputs
-    Rule("145.1", "145.4875", "-0.6", "12.5", "12.5"),
-    # 2-Meter Band
-    # 146.0050 Special UNBD Repeater Output #1
-    # 146.6050 Special UNBD Repeater Input #1
-    # "We flipped the input & output due to interference issues at the site."
-    # * Two Special UNBD channels, 6.25 kHz bandwidth only
-    Rule("146.605", "146.605", "-0.6", "0", "6.25"),
-    # 2-Meter Band
-    # 147.9950 Special UNBD Repeater Output #2
-    # 147.3950 Special UNBD Repeater Input #2
-    # * Two Special UNBD channels, 6.25 kHz bandwidth only
-    Rule("147.995", "147.995", "-0.6", "0", "6.25"),
-    # 2-Meter Band
-    # 146.40625 - 146.50625 VNBD Repeater Outputs
-    # 147.40625 - 147.50625 VNBD Repeater Inputs
-    # * 146.4125, bottom center frequency; 12.5 kHz steps, 8
-    #   channels to 146.5000, + 1 MHz offset; VNBD, UNBD only
+    Rule("145.2", "145.4875", "-0.6", "12.5", "12.5"),
+    # 146.4000 - 146.5000 Ultra/Narrowband Repeater Outputs
+    # 147.4000 - 147.5000 Ultra/Narrowband Repeater Inputs
+    # * 12.5 kHz steps, 8 channels to 146.5000, + 1 MHz offset; NBD, UNBD
     Rule("146.4125", "146.5", "1", "12.5", "12.5"),
-    # 2-Meter Band
-    # 146.6200 - 147.3800 Repeater outputs
-    # * Repeater channels are on odd frequencies below 146 MHz
-    #   and even frequencies above 146 MHz
-    #
-    # 2-Meter Band
-    # 146.0100 - 146.4000 Repeater inputs
-    # (ajorg) 146.0200 - 146.4000 Repeater inputs (center frequencies)
+    # 146.6200 - 147.3800 Repeater Outputs
+    # (split between -0.6 and +0.6)
+    # 146.0100 - 146.4000 Repeater Inputs
+    # 147.6100 - 147.9900 Repeater Inputs
     Rule("146.62", "147", "-0.6", "20"),
-    # 2-Meter Band
-    # (proposed) 146.6250 - 146.9875 NFM Repeater outputs
-    Rule("146.625", "146.9875", "-0.6", "12.5", "12.5"),
-    # 2-Meter Band
-    # 147.6100 - 147.9900 Repeater inputs
-    # (ajorg) 147.6000 - 147.98 Repeater inputs (center frequencies)
     Rule("147", "147.38", "0.6", "20"),
-    # 2-Meter Band
-    # (proposed) 147.0000 - 147.3875 NFM Repeater outputs
-    Rule("146.625", "146.9875", "0.6", "12.5", "12.5"),
+    Rule("146.625", "147", "-0.6", "12.5", "12.5"),
+    Rule("147", "147.3875", "0.6", "12.5", "12.5"),
+    # 147.9950 Special Ultra-Narrowband Rpt Output
+    # 147.3950 Special Ultra-Narrowband Rpt Input
+    Rule("147.995", "147.995", "-0.6", "0", "6.25"),
+
     # 1.25m MHz Band Plan
     # 223.7800 - 223.9800 Repeater Outputs
     # 222.1800 - 222.3800 Repeater Inputs
