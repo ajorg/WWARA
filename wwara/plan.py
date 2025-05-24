@@ -121,6 +121,10 @@ EXCEPTIONS = {
     Channel("AA7MI", "440.725", "445.725", input_tone="114.8"): {"comment": "KNOWN"},
     # WA7LZO Seattle 442.9 +5 P25  (47.61 -122.33) ERROR! NO NAC
     Channel("WA7LZO", "442.9", "447.9"): {"comment": 'KNOWN "Dynamic NAC"'},
+    # WA7DEM Everett 443 +5 FM 123.0 (47.92 -122.24) ERROR!
+    Channel("WA7DEM", "443", "448", input_tone="123.0"): {
+        "comment": 'KNOWN "Portable Repeater on SNP"'
+    },
 }
 ERRORS = {}
 
