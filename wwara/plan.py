@@ -22,7 +22,6 @@ REPEATERS = [
     # (ajorg) TODO
     # * 52.19/52.99 Shared Non-Protected (SNP) repeater pair
     Rule("52.81", "53.99", "-1.7", "20"),
-
     # WWARA 2m Band Usage
     # https://www.wwara.org/wp-content/uploads/2024/02/WWARA-2m-Band-Plan-20240225Publish-1.pdf
     # * Adjoining areas use 20 kHz spacing between repeater channels
@@ -51,7 +50,6 @@ REPEATERS = [
     # 147.9950 Special Ultra-Narrowband Rpt Output
     # 147.3950 Special Ultra-Narrowband Rpt Input
     Rule("147.995", "147.995", "-0.6", "0", "6.25"),
-
     # 1.25m MHz Band Plan
     # 223.7800 - 223.9800 Repeater Outputs
     # 222.1800 - 222.3800 Repeater Inputs
@@ -70,18 +68,19 @@ REPEATERS = [
     # 224.8600 - 224.9800 Repeater Outputs
     # 223.2600 - 223.3800 Repeater Inputs
     Rule("224.86", "224.98", "-1.6", "20"),
-    # [Revised] 70cm Band Plan
+    # WWARA 70cm Band
     # https://www.wwara.org/documents/70cmbandplan/
-    # TODO SNPs and other exceptions
+    # https://www.wwara.org/wp-content/uploads/2020/11/WWARA-70cm-Band-20201123.pdf
+    # TODO: SNPs and other exceptions
     Rule("440.0125", "440.0125", "5", "0", "12.5"),
-    Rule("440.0375", "440.7875", "5", "12.5", "12.5"),
     Rule("440.0500", "440.6750", "5", "25", "25"),
+    Rule("440.0375", "440.7875", "5", "12.5", "12.5"),
     Rule("440.9250", "440.9750", "5", "25", "25"),
     Rule("440.9125", "440.9875", "5", "12.5", "12.5"),
-    Rule("441.0125", "442.9875", "5", "12.5", "12.5"),
     Rule("441.0250", "442.9750", "5", "25", "25"),
+    Rule("441.0125", "442.9875", "5", "12.5", "12.5"),
+    Rule("443.0250", "444.9750", "5", "25", "25"),
     Rule("443.0125", "444.9875", "5", "12.5", "12.5"),
-    Rule("442.0250", "444.9750", "5", "25", "25"),
     # 33cm MHz Band Plan
     # 927.3000 - 928.0000 Repeater Outputs
     # 902.3000 - 903.0000 Repeater inputs
