@@ -1,5 +1,5 @@
 from wwara.database import coordinations
-from wwara.plan import in_region, match
+from wwara.plan import in_region, match, REPEATERS
 
 SEEN = set()
 
@@ -12,10 +12,21 @@ def test(channel):
     # Start with if it matches the band plan
     error = not match(channel)
 
+    is_cross_band = False
+    if not error:
+        # If the channel matches the band plan (match() returned True),
+        # but doesn't match any individual rule directly (channel not in rule),
+        # then it was matched via the cross-band logic in match(),
+        # which allows channels that span different bands by ignoring offset.
+        if not any(channel in rule for rule in REPEATERS):
+            comments.append("CROSS-BAND")
+            is_cross_band = True
+
     # Input and output reversed is not uncommon
     if match(~channel):
         error = False
-        comments.append("REVERSED")
+        if not is_cross_band:
+            comments.append("REVERSED")
 
     # At least one mode should be defined
     if not channel.modes:

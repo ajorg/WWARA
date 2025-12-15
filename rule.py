@@ -29,12 +29,12 @@ class Rule:
             self.low, self.high, self.offset, self.spacing, self.bandwidth
         )
 
-    def __contains__(self, channel):
+    def contains(self, channel, ignore_offset=False):
         # Is the output in this rule's range?
         if self.low <= channel.output <= self.high:
             channel.rules[self] = set()
             # Does it have the correct offset?
-            if channel.offset == self.offset:
+            if ignore_offset or channel.offset == self.offset:
                 channel.rules[self].add("offset")
             else:
                 return False
@@ -56,3 +56,6 @@ class Rule:
                 return False
             return True
         return False
+
+    def __contains__(self, channel):
+        return self.contains(channel, ignore_offset=False)

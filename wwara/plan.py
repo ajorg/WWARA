@@ -101,7 +101,11 @@ REPEATERS = [
     # 421.2500 Video carrier for ATV
     # 427.2500 Video carrier for ATV
     # 434.0000 Video carrier for ATV
-    # (ajorg) TODO ATV is complicated
+    Rule("1240", "1246", "0", "25"),
+    Rule("1252", "1258", "0", "25"),
+    Rule("421.25", "421.25", "0", "0"),
+    Rule("427.25", "427.25", "0", "0"),
+    Rule("434", "434", "0", "0"),
     # 23cm MHz Band Plan
     # 1290.000 - 1291.000 D-STAR DV mode repeater outputs
     # 1270.000 - 1271.000 D-STAR DV mode repeater inputs
@@ -115,8 +119,6 @@ REPEATERS = [
 ]
 
 EXCEPTIONS = {
-    # FIXME hack for ATV (cross-band)
-    Channel("WW7ATS", "1253.25", "434"): {"comment": "ATV"},
     # AA7MI Nordland 440.725 +5 FM 114.8 (48.04 -122.69) ERROR! TOO WIDE
     Channel("AA7MI", "440.725", "445.725", input_tone="114.8"): {"comment": "KNOWN"},
     # WA7LZO Seattle 442.9 +5 P25  (47.61 -122.33) ERROR! NO NAC
@@ -143,6 +145,15 @@ def match(channel):
     for rule in REPEATERS:
         if channel in rule:
             return True
+    # For cross-band, check if output matches some rule and input matches some rule, ignoring offset
+    output_matches = any(
+        rule.contains(channel, ignore_offset=True) for rule in REPEATERS
+    )
+    input_matches = any(
+        rule.contains(~channel, ignore_offset=True) for rule in REPEATERS
+    )
+    if output_matches and input_matches:
+        return True
     return False
 
 
