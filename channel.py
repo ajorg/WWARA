@@ -34,6 +34,8 @@ class Channel:
     # TODO: C4FM DSQ, decimal 001-126 (3 digits), is obsoleted by DG-ID 00-99 (2 digits)
     # Note: DG-ID is backward compatible, and 00 means "open"
     c4fm_dsq_k = "C4FM DSQ"
+    atv_k = "ATV"
+    datv_k = "DATV"
     location_k = "Location"
     latitude_k = "Latitude"
     longitude_k = "Longitude"
@@ -62,6 +64,8 @@ class Channel:
         dmr_cc_k,
         c4fm_k,
         c4fm_dsq_k,
+        atv_k,
+        datv_k,
         location_k,
         latitude_k,
         longitude_k,
@@ -202,10 +206,6 @@ class Channel:
         return "FM" in self.modes
 
     @property
-    def atv(self):
-        return "ATV" in self.modes
-
-    @property
     def p25(self):
         return "P25" in self.modes
 
@@ -224,6 +224,14 @@ class Channel:
     @property
     def c4fm(self):
         return "C4FM" in self.modes
+
+    @property
+    def atv(self):
+        return "ATV" in self.modes
+
+    @property
+    def datv(self):
+        return "DATV" in self.modes
 
     @property
     def number(self):
@@ -246,8 +254,6 @@ class Channel:
                 modes.append(f"{mode} {self.input_tone:.1f}")
             else:
                 modes.append(mode)
-        if "ATV" in self.modes:
-            modes.append("ATV")
         if "P25" in self.modes:
             modes.append(f"P25 {self.p25_nac}")
         if "D-STAR" in self.modes:
@@ -258,6 +264,10 @@ class Channel:
             modes.append(f"DMR CC{self.dmr_cc}")
         if "C4FM" in self.modes:
             modes.append(f"C4FM {self.c4fm_dsq}")
+        if "ATV" in self.modes:
+            modes.append("ATV")
+        if "DATV" in self.modes:
+            modes.append("DATV")
         return " & ".join(modes) or "NONE"
 
     @property
@@ -319,7 +329,6 @@ class Channel:
         yield self.input_tone_k, self.input_tone
         yield self.output_code_k, self.output_code
         yield self.input_code_k, self.input_code
-        yield self.atv_k, self.atv
         yield self.p25_k, self.p25
         yield self.p25_phase_k, self.p25_phase
         yield self.p25_nac_k, self.p25_nac
@@ -331,6 +340,8 @@ class Channel:
         yield self.dmr_cc_k, self.dmr_cc
         yield self.c4fm_k, self.c4fm
         yield self.c4fm_dsq_k, self.c4fm_dsq
+        yield self.atv_k, self.atv
+        yield self.datv_k, self.datv
         yield self.location_k, self.location
         yield self.latitude_k, self.latitude
         yield self.longitude_k, self.longitude

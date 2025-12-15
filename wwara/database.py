@@ -47,6 +47,8 @@ def _modes(row):
         modes.append("NXDN")
     if row["ATV"] == "Y":
         modes.append("ATV")
+    if row["DATV"] == "Y":
+        modes.append("DATV")
     return modes
 
 
