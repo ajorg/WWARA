@@ -349,6 +349,8 @@ class Channel:
 
     def distance(self, lat, lon):
         R = 6371  # Radius of the earth in km
+        lat = Decimal(lat)
+        lon = Decimal(lon)
         dLat = radians(lat - self.latitude)
         dLon = radians(lon - self.longitude)
         a = sin(dLat / 2) * sin(dLat / 2) + cos(radians(self.latitude)) * cos(
