@@ -73,6 +73,7 @@ def test(channel):
         if not (0 <= channel.c4fm_dsq <= 99):
             comments.append("DG-ID OUT OF RANGE")
         if not (0 <= channel.c4fm_dsq <= 126):
+            error = True
             comments.append("DSQ OUT OF RANGE")
     else:
         if channel.c4fm_dsq is not None:
