@@ -1,11 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Converts a WWARA database dump to ICOM format."""
 import codecs
 import logging
 from csv import DictReader, DictWriter
 from decimal import Decimal
-from io import BytesIO, StringIO
+from io import BytesIO
 from sys import stdout
+from urllib.request import urlopen
 from zipfile import ZipFile
 
 LOG = logging.getLogger(__name__)
@@ -30,6 +31,8 @@ FIELDNAMES = (
     "UTC Offset",
 )
 
+EXTRACT_URL = "https://www.wwara.org/DataBaseExtract.zip"
+
 
 def _drop_decimals(decimal):
     """Decimal.normalize gives 2E+1 for 20..."""
@@ -45,19 +48,15 @@ def _supported(row):
         row["DMR"],
         row["P25_PHASE_1"],
         row["P25_PHASE_2"],
-        # row['FUSION'],  # Fusion also operates Analog
         row["NXDN_DIGITAL"],
         row["ATV"],
         row["DATV"],
     ):
-        # These are not Analog modes
         return False
     ifreq = Decimal(row["INPUT_FREQ"])
-    if ifreq > 144 and ifreq < 148:
-        # 2M
+    if 144 < ifreq < 148:  # 2M
         return True
-    if ifreq > 420 and ifreq < 450:
-        # 70CM
+    if 420 < ifreq < 450:  # 70CM
         return True
     return False
 
@@ -98,11 +97,7 @@ def _access(row):
         access = "TONE"
         tone = "{:.1f}Hz".format(Decimal(row["CTCSS_IN"]))
         if row["CTCSS_OUT"]:
-            # Unsure if the data is reliable, and I understand most hams don't
-            # configure this, lest they miss something.
-            # access = 'TSQL'
             tsql = "{:.1f}Hz".format(Decimal(row["CTCSS_OUT"]))
-    # No DTCS possible!?
     return access, tone, tsql
 
 
@@ -120,12 +115,11 @@ def _call(row):
     if row["DSTAR_DV"] == "N" and row["DSTAR_DD"] == "N":
         return call, None
     ifreq = Decimal(row["INPUT_FREQ"])
-    if ifreq > 144 and ifreq < 148:
-        # 2M
+    if 144 < ifreq < 148:  # 2M
         return f"{call:<7}C", f"{call:<7}G"
-    if ifreq > 420 and ifreq < 450:
-        # 70CM
+    if 420 < ifreq < 450:  # 70CM
         return f"{call:<7}B", f"{call:<7}G"
+    return call, None
 
 
 def _position(row):
@@ -145,9 +139,7 @@ def convert(zipfile):
         if name.endswith(".csv"):
             pending = bool("-pending-" in name)
             with zipfile.open(name, "r") as csv:
-                # Remove the DATA_SPEC_VERSION header line from the .csv
-                csv.readline()
-                i = 0
+                csv.readline()  # Remove DATA_SPEC_VERSION header
                 for row in DictReader(codecs.getreader("us-ascii")(csv)):
                     if not _supported(row):
                         continue
@@ -155,7 +147,6 @@ def convert(zipfile):
                     mode = _mode(row)
                     name = _name(row, pending)
                     call, gateway = _call(row)
-                    # Ignore tone squelch because data might be unreliable
                     access, tone, _ = _access(row)
                     position, latitude, longitude = _position(row)
                     wlist.append(
@@ -171,79 +162,26 @@ def convert(zipfile):
                             "Offset": offset,
                             "Mode": mode,
                             "TONE": access,
-                            "Repeater Tone": tone,  # No field for DTCS!?
-                            "RPT1USE": "YES",  # Something like "Don't Skip"?
+                            "Repeater Tone": tone,
+                            "RPT1USE": "YES",
                             "Position": position,
                             "Latitude": latitude,
                             "Longitude": longitude,
-                            # PST, but how is this useful!?
                             "UTC Offset": "-8:00",
                         }
                     )
-                    i += 1
     return sorted(wlist, key=lambda x: (x["Mode"], Decimal(x["Frequency"])))
 
 
-def lambda_handler(event=None, context=None):
-    """Handler for use in AWS Lambda."""
-    from os import environ
+def main():
+    """Main entry point."""
+    with urlopen(EXTRACT_URL) as response:
+        zipfile = ZipFile(BytesIO(response.read()))
 
-    import boto3
-
-    try:
-        from urllib.parse import urlparse
-    except ImportError:
-        from urlparse import urlparse
-
-    LOG.setLevel(logging.DEBUG)
-
-    client = boto3.client("s3")
-
-    source = environ.get("SOURCE")
-    src_parsed = urlparse(source)
-    src_bucket = src_parsed.netloc
-    src_key = src_parsed.path.lstrip("/")
-
-    destination = environ.get("DESTINATION")
-    dst_parsed = urlparse(destination)
-    dst_bucket = dst_parsed.netloc
-    dst_key = dst_parsed.path.lstrip("/")
-
-    LOG.info("Reading from %s", source)
-    src = client.get_object(Bucket=src_bucket, Key=src_key)
-    data = src.get("Body").read()
-    zipfile = ZipFile(BytesIO(data))
-
-    string_obj = StringIO()
-    writer = DictWriter(string_obj, FIELDNAMES)
+    writer = DictWriter(stdout, FIELDNAMES)
     writer.writeheader()
-    LOG.info("Converting...")
     writer.writerows(convert(zipfile))
-
-    LOG.info("Writing to %s", destination)
-    client.put_object(
-        Bucket=dst_bucket,
-        Key=dst_key,
-        Body=string_obj.getvalue(),
-        ContentType="text/csv",
-        StorageClass="REDUCED_REDUNDANCY",
-        ACL="public-read",
-    )
-    string_obj.close()
 
 
 if __name__ == "__main__":
-    import requests
-
-    RESPONSE = requests.get("https://www.wwara.org/DataBaseExtract.zip")
-    # ZipFile requires a file-like object that supports seek
-    FILE_OBJ = BytesIO(RESPONSE.content)
-    RESPONSE.close()
-    ZIPFILE = ZipFile(FILE_OBJ)
-
-    WRITER = DictWriter(stdout, FIELDNAMES)
-    WRITER.writeheader()
-
-    WRITER.writerows(convert(ZIPFILE))
-
-    FILE_OBJ.close()
+    main()

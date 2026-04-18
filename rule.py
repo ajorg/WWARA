@@ -13,7 +13,9 @@ class Rule:
         self.bandwidth = Decimal(bandwidth)
 
     def __hash__(self):
-        return hash((self.low, self.high, self.offset, self.spacing, self.bandwidth))
+        return hash(
+            (self.low, self.high, self.offset, self.spacing, self.bandwidth)
+        )
 
     def __eq__(self, other):
         return (

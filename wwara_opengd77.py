@@ -4,7 +4,7 @@ import logging
 import re
 from csv import DictWriter
 from decimal import Decimal
-from sys import stderr, stdout
+from sys import stderr
 
 from channel import Channel
 from wwara.database import coordinations
@@ -248,13 +248,17 @@ def _dedup_names(
 def channels_csv(channels):
     with open("Channels.csv", "w", newline="") as _channels_csv:
         writer = DictWriter(
-            _channels_csv, fieldnames=GB3GFChannel.fieldnames, delimiter=DELIMITER
+            _channels_csv,
+            fieldnames=GB3GFChannel.fieldnames,
+            delimiter=DELIMITER,
         )
         writer.writeheader()
         writer.writerows(channels)
 
 
-ZONES_FIELDNAMES = tuple(["Zone Name"] + ["Channel " + str(i) for i in range(1, 81)])
+ZONES_FIELDNAMES = tuple(
+    ["Zone Name"] + ["Channel " + str(i) for i in range(1, 81)]
+)
 
 
 def zones_csv(channels):
@@ -277,8 +281,9 @@ def zones_csv(channels):
             for channel in channels:
                 if i > 80:
                     break
-                if (spec["mode"] is not None) and (spec["mode"] not in channel.modes):
-                    continue
+                if spec["mode"] is not None:
+                    if spec["mode"] not in channel.modes:
+                        continue
                 if not (spec["low"] <= channel.input <= spec["high"]):
                     continue
                 zone[f"Channel {i}"] = channel.name

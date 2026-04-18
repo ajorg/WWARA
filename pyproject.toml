@@ -1,0 +1,50 @@
+[project]
+name = "wwara"
+version = "0.1.0"
+description = "WWARA repeater database tools"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.34.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.4.0",
+]
+
+[project.scripts]
+wwara-repeaterbook = "wwara.repeaterbook:main"
+wwara-to-icom = "wwara.to_icom:main"
+wwara-to-chirp-csv = "wwara.to_chirp_csv:main"
+wwara-to-chirp = "wwara.to_chirp:main"
+wwara-available = "wwara.available:main"
+wwara-distance = "wwara.distance:main"
+wwara-kml = "wwara.kml:main"
+wwara-maps-csv = "wwara.maps_csv:main"
+wwara-oob-maps-csv = "wwara.oob_maps_csv:main"
+wwara-qc = "wwara.qc:main"
+arrl-csv-to-chirp-csv = "wwara.arrl_csv_to_chirp_csv:main"
+arrl-csv-to-chirp-xml = "wwara.arrl_csv_to_chirp_xml:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 79
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.15.7",
+]

@@ -1,5 +1,4 @@
-from wwara.database import coordinations
-from wwara.plan import in_region, match, REPEATERS
+from wwara.plan import REPEATERS, in_region, match
 
 SEEN = set()
 
@@ -111,7 +110,7 @@ def test(channel):
         comments.append("DUPLICATE")
     SEEN.add(channel)
 
-    # Basic errors like being too wide for the channel or having the wrong offset
+    # Basic errors: too wide for channel, or wrong offset
     if channel.errors:
         error = True
         comments.extend(channel.errors)

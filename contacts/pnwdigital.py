@@ -1,4 +1,3 @@
-import urllib.request
 from decimal import Decimal
 from html.parser import HTMLParser
 from urllib.request import urlopen
@@ -52,12 +51,13 @@ class TableParser(HTMLParser):
 
 
 FREQUENT_IDS = []
+PNWDIGITAL_API_URL = "https://pnwdigital.net/services/frequentids.php"
 
 
 def frequent_ids():
     if FREQUENT_IDS:
         return FREQUENT_IDS
-    with urlopen("https://pnwdigital.net/services/frequentids.php") as response:
+    with urlopen(PNWDIGITAL_API_URL) as response:
         content = response.read().decode("utf-8")
     parser = TableParser()
     parser.feed(content)

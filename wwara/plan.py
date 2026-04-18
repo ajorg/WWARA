@@ -120,9 +120,13 @@ REPEATERS = [
 
 EXCEPTIONS = {
     # AA7MI Nordland 440.725 +5 FM 114.8 (48.04 -122.69) ERROR! TOO WIDE
-    Channel("AA7MI", "440.725", "445.725", input_tone="114.8"): {"comment": "KNOWN"},
+    Channel("AA7MI", "440.725", "445.725", input_tone="114.8"): {
+        "comment": "KNOWN",
+    },
     # WA7LZO Seattle 442.9 +5 P25  (47.61 -122.33) ERROR! NO NAC
-    Channel("WA7LZO", "442.9", "447.9"): {"comment": 'KNOWN "Dynamic NAC"'},
+    Channel("WA7LZO", "442.9", "447.9"): {
+        "comment": 'KNOWN "Dynamic NAC"',
+    },
 }
 ERRORS = {}
 
@@ -145,7 +149,7 @@ def match(channel):
     for rule in REPEATERS:
         if channel in rule:
             return True
-    # For cross-band, check if output matches some rule and input matches some rule, ignoring offset
+    # For cross-band, check if output/input match rules, ignoring offset
     output_matches = any(
         rule.contains(channel, ignore_offset=True) for rule in REPEATERS
     )

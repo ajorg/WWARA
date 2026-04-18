@@ -22,8 +22,8 @@ class Channel:
     # TODO: Colour Codes are decimal, 0-15
     dmr_cc_k = "DMR CC"
     c4fm_k = "C4FM"
-    # TODO: C4FM DSQ, decimal 001-126 (3 digits), is obsoleted by DG-ID 00-99 (2 digits)
-    # Note: DG-ID is backward compatible, and 00 means "open"
+    # TODO: C4FM DSQ is decimal 001-126 (3 digits), obsoleted by DG-ID 00-99
+    # Note: DG-ID is backward compatible; 00 means "open"
     c4fm_dsq_k = "C4FM DSQ"
     dstar_k = "D-STAR"
     dstar_mode_k = "D-STAR Mode"
@@ -32,7 +32,8 @@ class Channel:
     # TODO: P25 NAC is hexadecimal, default 0x293, from 0x000 to 0xfff
     p25_nac_k = "P25 NAC"
     nxdn_k = "NXDN"
-    # TODO: AFAICT NXDN RANs are decimal, from 1-63 (0 probably means open or all)
+    # TODO: AFAICT NXDN RANs are decimal, from 1-63
+    # (0 probably means open or all)
     nxdn_ran_k = "NXDN RAN"
     atv_k = "ATV"
     datv_k = "DATV"
@@ -348,13 +349,15 @@ class Channel:
         yield self.rx_only_k, self.rx_only
 
     def distance(self, lat, lon):
-        R = 6371  # Radius of the earth in km
+        r_earth = 6371  # Radius of the earth in km
         lat = Decimal(lat)
         lon = Decimal(lon)
-        dLat = radians(lat - self.latitude)
-        dLon = radians(lon - self.longitude)
-        a = sin(dLat / 2) * sin(dLat / 2) + cos(radians(self.latitude)) * cos(
-            radians(lat)
-        ) * sin(dLon / 2) * sin(dLon / 2)
+        d_lat = radians(lat - self.latitude)
+        d_lon = radians(lon - self.longitude)
+        a = (
+            sin(d_lat / 2) * sin(d_lat / 2)
+            + cos(radians(self.latitude)) * cos(radians(lat))
+            * sin(d_lon / 2) * sin(d_lon / 2)
+        )
         c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        return R * c  # Distance in km
+        return r_earth * c  # Distance in km

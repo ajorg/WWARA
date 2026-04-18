@@ -1,6 +1,5 @@
 import json
 from os import environ
-from urllib.parse import urlparse
 
 import boto3
 
@@ -34,22 +33,27 @@ def lambda_handler(event=None, context=None):
     latest_object = S3.get_object(Bucket=bucket, Key=key)
     latest = set(coordinations(file_obj=latest_object["Body"]))
 
-    versions = S3.list_object_versions(Bucket=bucket, Prefix=key, MaxKeys=VERSION_DEPTH)
+    versions = S3.list_object_versions(
+        Bucket=bucket, Prefix=key, MaxKeys=VERSION_DEPTH
+    )
     version_id = versions["Versions"][-1]["VersionId"]
     print(json.dumps({"Previous-VersionId": version_id}))
 
-    previous_object = S3.get_object(Bucket=bucket, Key=key, VersionId=version_id)
+    previous_object = S3.get_object(
+        Bucket=bucket, Key=key, VersionId=version_id
+    )
     previous = set(coordinations(file_obj=previous_object["Body"]))
 
     changed = False
-    for subject, channels in (
-        ("WWARA Removed", previous - latest),
-        ("WWARA Added", latest - previous),
+    sections = []
+    for heading, items in (
+        ("Added", latest - previous),
+        ("Removed", previous - latest),
     ):
-        if channels:
+        if items:
             changed = True
             messages = []
-            for channel in sorted(channels):
+            for channel in sorted(items):
                 error, comments = test(channel)
                 if error and channel not in EXCEPTIONS:
                     comments.insert(0, "ERROR!")
@@ -58,14 +62,17 @@ def lambda_handler(event=None, context=None):
                     messages.append(f"{channel} {comments}")
                 else:
                     messages.append(str(channel))
-            message = "\n".join(messages)
-            print(json.dumps({"Subject": subject, "Message": message}))
-            if TOPIC_ARN:
-                SNS.publish(
-                    TopicArn=TOPIC_ARN,
-                    Subject=subject,
-                    Message=message,
-                )
+            sections.append(f"{heading}:\n" + "\n".join(messages))
+    if changed:
+        message = "\n\n".join(sections)
+        subject = "WWARA Delta"
+        print(json.dumps({"Subject": subject, "Message": message}))
+        if TOPIC_ARN:
+            SNS.publish(
+                TopicArn=TOPIC_ARN,
+                Subject=subject,
+                Message=message,
+            )
     if not changed:
         print("no changes")
 
