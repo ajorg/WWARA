@@ -14,6 +14,7 @@ SNS = boto3.client("sns")
 BUCKET = "wwara"
 KEY = "DataBaseExtract.zip"
 TOPIC_ARN = environ.get("TOPIC_ARN", "").split()
+SUBJECT = environ.get("SUBJECT", "WWARA-Delta Report")
 VERSION_DEPTH = int(environ.get("VERSION_DEPTH", 1)) + 1
 
 
@@ -41,14 +42,13 @@ def lambda_handler(event=None, context=None):
     previous_object = S3.get_object(Bucket=bucket, Key=key, VersionId=version_id)
     previous = set(coordinations(file_obj=previous_object["Body"]))
 
-    changed = False
-    for subject, channels in (
-        ("WWARA Removed", previous - latest),
-        ("WWARA Added", latest - previous),
+    messages = []
+    for heading, channels in (
+        ("Removed", previous - latest),
+        ("Added", latest - previous),
     ):
         if channels:
-            changed = True
-            messages = []
+            messages.append(heading)
             for channel in sorted(channels):
                 error, comments = test(channel)
                 if error and channel not in EXCEPTIONS:
@@ -58,15 +58,17 @@ def lambda_handler(event=None, context=None):
                     messages.append(f"{channel} {comments}")
                 else:
                     messages.append(str(channel))
-            message = "\n".join(messages)
-            print(json.dumps({"Subject": subject, "Message": message}))
-            for topic_arn in TOPIC_ARN:
-                SNS.publish(
-                    TopicArn=TOPIC_ARN,
-                    Subject=subject,
-                    Message=message,
-                )
-    if not changed:
+
+    if messages:
+        message = "\n".join(messages)
+        print(json.dumps({"Subject": SUBJECT, "Message": message}))
+        for topic_arn in TOPIC_ARN:
+            SNS.publish(
+                TopicArn=topic_arn,
+                Subject=SUBJECT,
+                Message=message,
+            )
+    else:
         print("no changes")
 
 
