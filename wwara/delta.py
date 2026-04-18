@@ -13,7 +13,7 @@ SNS = boto3.client("sns")
 
 BUCKET = "wwara"
 KEY = "DataBaseExtract.zip"
-TOPIC_ARN = environ.get("TOPIC_ARN")
+TOPIC_ARN = environ.get("TOPIC_ARN", "").split()
 VERSION_DEPTH = int(environ.get("VERSION_DEPTH", 1)) + 1
 
 
@@ -60,7 +60,7 @@ def lambda_handler(event=None, context=None):
                     messages.append(str(channel))
             message = "\n".join(messages)
             print(json.dumps({"Subject": subject, "Message": message}))
-            if TOPIC_ARN:
+            for topic_arn in TOPIC_ARN:
                 SNS.publish(
                     TopicArn=TOPIC_ARN,
                     Subject=subject,
