@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+import os
 from decimal import Decimal, InvalidOperation
 from json import dumps, loads
 from json.decoder import JSONDecodeError
 from sys import exit, stderr
 from time import sleep
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 from channel import Channel
@@ -13,12 +15,24 @@ HEADERS = {
     "User-Agent": "wwara-repeaterbook/1.0 (https://github.com/ajorg/WWARA/blob/main/wwara-repeaterbook, andrew@jorgensenfamily.us)",
 }
 # This product uses RepeaterBook Data API but is not endorsed or certified by RepeaterBook
-API_URL = "https://www.repeaterbook.com/api/export.php?country=United%20States&state={}"
-# API_URL = "http://files.jorgensenfamily.us/repeaterbook-{}.json"
+API_URL = "https://www.repeaterbook.com/api/export.php?state_id={state_id}"
+# API_URL = "http://files.jorgensenfamily.us/repeaterbook-{state}.json"
+STATE_IDS = {"Washington": 53, "Oregon": 41}
 
 results = []
 for state in ("Washington", "Oregon"):
-    request = Request(API_URL.format(state), headers=HEADERS)
+    url = API_URL.format(state=state, state_id=STATE_IDS[state])
+    print(url)
+    headers = dict(HEADERS)
+    host = urlparse(url).netloc.split(":", 1)[0]
+    if host == "repeaterbook.com" or host.endswith(".repeaterbook.com"):
+        token = os.getenv("RB_TOKEN")
+        if not token:
+            print("RB_TOKEN required for RepeaterBook API", file=stderr)
+            exit(1)
+        headers["Authorization"] = f"Bearer {token}"
+    print(headers)
+    request = Request(url, headers=headers)
     with urlopen(request) as response:
         content = response.read()
         try:
