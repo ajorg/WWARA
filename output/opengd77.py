@@ -47,6 +47,7 @@ class OpenGD77Channel(Channel):
     aprs_k = "APRS"
     latitude_k = "Latitude"
     longitude_k = "Longitude"
+    use_location_k = "Use Location"
     fieldnames = (
         number_k,
         name_k,
@@ -75,6 +76,7 @@ class OpenGD77Channel(Channel):
         aprs_k,
         latitude_k,
         longitude_k,
+        use_location_k,
     )
     name_length = NAME_LENGTH
 
@@ -169,6 +171,7 @@ class OpenGD77Channel(Channel):
         yield self.aprs_k, "None"
         yield self.latitude_k, self.latitude
         yield self.longitude_k, self.longitude
+        yield self.use_location_k, "No"
 
 
 def _supported(channel):
