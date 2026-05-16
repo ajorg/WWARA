@@ -257,7 +257,7 @@ def channels_csv(channels):
         writer.writerows(channels)
 
 
-ZONES_FIELDNAMES = tuple(["Zone Name"] + ["Channel " + str(i) for i in range(1, 81)])
+ZONES_FIELDNAMES = tuple(["Zone Name"] + ["Channel" + str(i) for i in range(1, 81)])
 
 
 def _zones(channels):
@@ -302,12 +302,12 @@ if __name__ == "__main__":
                     for channel in chirp.zone(_zone):
                         print(channel)
                         channels.append(OpenGD77Channel(channel))
-                        zone_row[f"Channel {i}"] = channel.name
+                        zone_row[f"Channel{i}"] = channel.name
                         i += 1
             zone_rows.append(zone_row)
             continue
         for item_name, item in zone.items():
-            zone_row[f"Channel {i}"] = item_name
+            zone_row[f"Channel{i}"] = item_name
             i += 1
             if item is None:
                 print(item_name)
@@ -346,7 +346,7 @@ if __name__ == "__main__":
             i = 1
             zone_row = {"Zone Name": _zone_name}
             for channel_name in channel_names:
-                zone_row[f"Channel {i}"] = channel_name
+                zone_row[f"Channel{i}"] = channel_name
                 i += 1
             zone_rows.append(zone_row)
     channels_csv(channels)
