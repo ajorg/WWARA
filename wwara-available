@@ -1,28 +1,13 @@
 #!/usr/bin/env python3
-from decimal import Decimal
-
 from channel import Channel
 from wwara.database import coordinations
 from wwara.plan import REPEATERS
 
-
-def match(channel):
-    for rule in REPEATERS:
-        if channel in rule:
-            return True
-    return False
-
-
 CHANNELS = set()
 for rule in REPEATERS:
-    if rule.bandwidth == Decimal("12.5"):
-        continue
     output = rule.low
-    if rule.spacing == Decimal(0):
-        CHANNELS.add(Channel("EMPTY", output, output + rule.offset))
-        continue
-    while output <= rule.high and rule.offset:
-        CHANNELS.add(Channel("EMPTY", output, output + rule.offset))
+    while output <= rule.high:
+        CHANNELS.add(Channel("EMPTY", output, output + rule.offset, bandwidth=rule.bandwidth))
         output += rule.spacing / 1000
 
 for channel in coordinations():

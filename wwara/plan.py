@@ -49,7 +49,7 @@ REPEATERS = [
     Rule("147", "147.3875", "0.6", "12.5", "12.5"),
     # 147.9950 Special Ultra-Narrowband Rpt Output
     # 147.3950 Special Ultra-Narrowband Rpt Input
-    Rule("147.995", "147.995", "-0.6", "0", "6.25"),
+    Rule("147.995", "147.995", "-0.6", "6.25", "6.25"),
     # 1.25m MHz Band Plan
     # 223.7800 - 223.9800 Repeater Outputs
     # 222.1800 - 222.3800 Repeater Inputs
@@ -72,7 +72,7 @@ REPEATERS = [
     # https://www.wwara.org/documents/70cmbandplan/
     # https://www.wwara.org/wp-content/uploads/2020/11/WWARA-70cm-Band-20201123.pdf
     # TODO: SNPs and other exceptions
-    Rule("440.0125", "440.0125", "5", "0", "12.5"),
+    Rule("440.0125", "440.0125", "5", "12.5", "12.5"),
     Rule("440.0500", "440.6750", "5", "25", "25"),
     Rule("440.0375", "440.7875", "5", "12.5", "12.5"),
     Rule("440.9250", "440.9750", "5", "25", "25"),
@@ -103,9 +103,9 @@ REPEATERS = [
     # 434.0000 Video carrier for ATV
     Rule("1240", "1246", "0", "25"),
     Rule("1252", "1258", "0", "25"),
-    Rule("421.25", "421.25", "0", "0"),
-    Rule("427.25", "427.25", "0", "0"),
-    Rule("434", "434", "0", "0"),
+    Rule("421.25", "421.25", "0", "25"),
+    Rule("427.25", "427.25", "0", "25"),
+    Rule("434", "434", "0", "25"),
     # 23cm MHz Band Plan
     # 1290.000 - 1291.000 D-STAR DV mode repeater outputs
     # 1270.000 - 1271.000 D-STAR DV mode repeater inputs

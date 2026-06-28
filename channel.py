@@ -194,8 +194,8 @@ class Channel:
     def overlaps(self, other):
         half = max(self.bandwidth, other.bandwidth) / Decimal(2000)
         return (
-            abs(self.output - other.output) < half
-            or abs(self.input - other.input) < half
+            abs(self.output - other.output) <= half
+            or abs(self.input - other.input) <= half
         )
 
     @property

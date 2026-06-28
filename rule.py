@@ -40,7 +40,7 @@ class Rule:
                 return False
             # Is it also aligned to this rule's spacing?
             # `or 1` accounts for single-channel rules with 0 spacing
-            if (channel.output - self.low) % ((self.spacing / 1000) or 1) == 0:
+            if (channel.output - self.low) % (self.spacing / 1000) == 0:
                 channel.rules[self].add("spacing")
             else:
                 return False
