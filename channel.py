@@ -180,6 +180,7 @@ class Channel:
             and self.c4fm_dsq == other.c4fm_dsq
             and self.p25_nac == other.p25_nac
             and self.nxdn_ran == other.nxdn_ran
+            and set(self.modes) == set(other.modes)
         )
 
     def __lt__(self, other):
@@ -189,6 +190,13 @@ class Channel:
         inverse = copy(self)
         inverse.output, inverse.input = self.input, self.output
         return inverse
+
+    def overlaps(self, other):
+        half = max(self.bandwidth, other.bandwidth) / Decimal(2000)
+        return (
+            abs(self.output - other.output) < half
+            or abs(self.input - other.input) < half
+        )
 
     @property
     def name(self):

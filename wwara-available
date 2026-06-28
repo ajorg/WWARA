@@ -26,8 +26,7 @@ for rule in REPEATERS:
         output += rule.spacing / 1000
 
 for channel in coordinations():
-    CHANNELS.discard(Channel("EMPTY", channel.output, channel.input))
-    CHANNELS.discard(Channel("EMPTY", channel.input, channel.output))
+    CHANNELS = {c for c in CHANNELS if not c.overlaps(channel) and not c.overlaps(~channel)}
 
 for channel in sorted(CHANNELS):
     print(channel)
