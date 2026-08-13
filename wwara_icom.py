@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Converts a WWARA database dump to ICOM format."""
+
 import codecs
 import logging
 from csv import DictReader, DictWriter

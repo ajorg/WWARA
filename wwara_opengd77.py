@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Converts a WWARA database dump to GB3GF CSV format for GD-77."""
+
 import logging
 import re
 from csv import DictWriter

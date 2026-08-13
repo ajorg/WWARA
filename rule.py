@@ -48,8 +48,7 @@ class Rule:
             if (channel.bandwidth <= self.bandwidth) or (
                 # If the rule is ultra-narrow
                 # assume the channel is ultra-narrow
-                self.bandwidth
-                == Decimal("6.25")
+                self.bandwidth == Decimal("6.25")
             ):
                 channel.rules[self].add("bandwidth")
             else:
