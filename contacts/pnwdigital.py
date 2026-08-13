@@ -1,4 +1,3 @@
-import urllib.request
 from decimal import Decimal
 from html.parser import HTMLParser
 from urllib.request import urlopen

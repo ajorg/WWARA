@@ -1,6 +1,5 @@
 import json
 from os import environ
-from urllib.parse import urlparse
 
 import boto3
 

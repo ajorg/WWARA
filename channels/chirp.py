@@ -2,10 +2,7 @@
 import codecs
 from csv import DictReader
 from decimal import Decimal
-from io import BytesIO
-from sys import stderr
 from urllib.request import urlopen
-from zipfile import ZipFile
 
 from channel import Channel
 
@@ -53,7 +50,7 @@ def stock_config(name):
 
 
 def stock_configs():
-    for name in STOCK_CONFIG_URLS.keys():
+    for name in STOCK_CONFIG_URLS:
         for channel in stock_config(name):
             yield channel
 

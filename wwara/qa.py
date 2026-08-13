@@ -1,5 +1,4 @@
-from wwara.database import coordinations
-from wwara.plan import in_region, match, REPEATERS
+from wwara.plan import REPEATERS, in_region, match
 
 SEEN = set()
 

@@ -111,7 +111,7 @@ def _name(row, pending=False):
     """Formats a usable name for the repeater."""
     name = " ".join((row["CALL"], row["CITY"]))[:16]
     if pending:
-        name = "[{}]".format(name[:14])
+        name = f"[{name[:14]}]"
     return name
 
 
@@ -123,10 +123,10 @@ def _call(row):
     ifreq = Decimal(row["INPUT_FREQ"])
     if ifreq > 144 and ifreq < 148:
         # 2M
-        return "{:<7}C".format(call), "{:<7}G".format(call)
+        return f"{call:<7}C", f"{call:<7}G"
     if ifreq > 420 and ifreq < 450:
         # 70CM
-        return "{:<7}B".format(call), "{:<7}G".format(call)
+        return f"{call:<7}B", f"{call:<7}G"
 
 
 def _position(row):

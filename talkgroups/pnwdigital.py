@@ -1,10 +1,5 @@
-import codecs
 from csv import DictReader
-from datetime import date
-from io import StringIO
-from os import path
 from os.path import abspath, dirname, join
-from urllib.request import urlopen
 
 from contact import Contact
 
