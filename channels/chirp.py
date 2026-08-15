@@ -51,8 +51,7 @@ def stock_config(name):
 
 def stock_configs():
     for name in STOCK_CONFIG_URLS:
-        for channel in stock_config(name):
-            yield channel
+        yield from stock_config(name)
 
 
 def zone(name):

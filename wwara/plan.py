@@ -136,9 +136,7 @@ LON_HI = -121.32
 def in_region(channel):
     if not (LAT_LO < channel.latitude < LAT_HI):
         return False
-    if not (LON_LO < channel.longitude < LON_HI):
-        return False
-    return True
+    return LON_LO < channel.longitude < LON_HI
 
 
 def match(channel):
@@ -152,9 +150,7 @@ def match(channel):
     input_matches = any(
         rule.contains(~channel, ignore_offset=True) for rule in REPEATERS
     )
-    if output_matches and input_matches:
-        return True
-    return False
+    return bool(output_matches and input_matches)
 
 
 if __name__ == "__main__":

@@ -57,10 +57,8 @@ def _supported(row):
     if ifreq > 144 and ifreq < 148:
         # 2M
         return True
-    if ifreq > 420 and ifreq < 450:
-        # 70CM
-        return True
-    return False
+    # 70CM
+    return ifreq > 420 and ifreq < 450
 
 
 def _offset(row):

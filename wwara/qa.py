@@ -12,14 +12,13 @@ def test(channel):
     error = not match(channel)
 
     is_cross_band = False
-    if not error:
-        # If the channel matches the band plan (match() returned True),
-        # but doesn't match any individual rule directly (channel not in rule),
-        # then it was matched via the cross-band logic in match(),
-        # which allows channels that span different bands by ignoring offset.
-        if not any(channel in rule for rule in REPEATERS):
-            comments.append("CROSS-BAND")
-            is_cross_band = True
+    # If the channel matches the band plan (match() returned True),
+    # but doesn't match any individual rule directly (channel not in rule),
+    # then it was matched via the cross-band logic in match(),
+    # which allows channels that span different bands by ignoring offset.
+    if not error and not any(channel in rule for rule in REPEATERS):
+        comments.append("CROSS-BAND")
+        is_cross_band = True
 
     # Input and output reversed is not uncommon
     if match(~channel):

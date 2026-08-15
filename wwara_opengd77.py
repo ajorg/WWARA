@@ -12,8 +12,8 @@ from wwara.database import coordinations
 
 LOG = logging.getLogger(__name__)
 
-LAT = Decimal(47.80)
-LON = Decimal(-122.25)
+LAT = Decimal("47.80")
+LON = Decimal("-122.25")
 RANGE = 80
 
 NAME_LENGTH = 16
@@ -181,9 +181,7 @@ def _supported(channel):
     if 222 <= channel.input <= 225:
         channel.rx_only = True
         return True
-    if 420 <= channel.input <= 450:
-        return True
-    return False
+    return 420 <= channel.input <= 450
 
 
 def _dedup_names(

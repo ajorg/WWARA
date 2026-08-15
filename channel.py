@@ -282,9 +282,7 @@ class Channel:
     def errors(self):
         _errors = []
         if self.rules:
-            rule, match = sorted(
-                self.rules.items(), key=lambda x: len(x[1]), reverse=True
-            )[0]
+            _rule, match = max(self.rules.items(), key=lambda x: len(x[1]))
             if "offset" not in match:
                 _errors.append("WRONG OFFSET")
             if "spacing" not in match:

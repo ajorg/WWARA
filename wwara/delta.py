@@ -14,7 +14,7 @@ BUCKET = "wwara"
 KEY = "DataBaseExtract.zip"
 TOPIC_ARN = environ.get("TOPIC_ARN", "").split()
 SUBJECT = environ.get("SUBJECT", "WWARA-Delta Report")
-VERSION_DEPTH = int(environ.get("VERSION_DEPTH", 1)) + 1
+VERSION_DEPTH = int(environ.get("VERSION_DEPTH", "1")) + 1
 
 
 def lambda_handler(event=None, context=None):
@@ -26,7 +26,7 @@ def lambda_handler(event=None, context=None):
         # From S3 through EventBridge
         event_detail = event["detail"]
     else:
-        raise
+        raise ValueError(f"Unrecognized event format: {event}")
     bucket = event_detail["bucket"]["name"]
     key = event_detail["object"]["key"]
     print(json.dumps({"bucket": bucket, "key": key}))
