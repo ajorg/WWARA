@@ -30,6 +30,7 @@ for state in ("Washington", "Oregon"):
             print("RB_TOKEN required for RepeaterBook API", file=stderr)
             exit(1)
         headers["Authorization"] = f"Bearer {token}"
+        headers["X-RB-App-Token"] = f"{token}"
     print(headers)
     request = Request(url, headers=headers)
     with urlopen(request) as response:
@@ -70,7 +71,8 @@ for channel in coordinations(filenames=True):
         c4fm_dsq = None
         if result["System Fusion"] == "Yes":
             modes.append("C4FM")
-            c4fm_dsq = result["YSF DG ID Uplink"]
+            # RepeaterBook's API documents but doesn't include this field
+            c4fm_dsq = result.get("YSF DG ID Uplink")
 
         p25_nac = None
         if result["APCO P-25"] == "Yes":
