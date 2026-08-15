@@ -61,7 +61,15 @@ def frequent_ids():
     parser = TableParser()
     parser.feed(content)
     for row in parser.table:
-        yield RADIOID_CONTACTS[Decimal(row["Call ID"])]
+        if not row.get("Callsign"):
+            # Not a data row; e.g. a footer/instructions block that the table
+            # parser mistakes for a row.
+            continue
+        call_id = Decimal(row["Call ID"])
+        try:
+            yield RADIOID_CONTACTS[call_id]
+        except KeyError:
+            print(f"Unknown RadioID: {call_id}")
 
 
 if __name__ == "__main__":
