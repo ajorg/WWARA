@@ -31,7 +31,6 @@ for state in ("Washington", "Oregon"):
             exit(1)
         headers["Authorization"] = f"Bearer {token}"
         headers["X-RB-App-Token"] = f"{token}"
-    print(headers)
     request = Request(url, headers=headers)
     with urlopen(request) as response:
         content = response.read()
